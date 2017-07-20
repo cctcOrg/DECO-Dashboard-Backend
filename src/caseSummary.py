@@ -3,12 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restful import reqparse, abort, Api, Resource
 
 class Case(Resource):
-   # Get all cases for some specific user
+   # Return case summary
    def get(self):
       # Get JSON data from frontend containing userId
       data = request.get_json()
 
-      case = CaseSummary.query.filter_by(userId=data['userId']).all()
+      # Get a specific case for logged in user
+      if (caseId = request.args.get('caseId')):
+         case = CaseSummary.query.filter_by(id = caseId, 
+            userId=data['userId']).all()
+      # Get all cases for logged in user
+      else:
+         case = CaseSummary.query.filter_by(userId=data['userId']).all()
 
       return { "json_list": [i.serialize for i in case] }
    
@@ -37,5 +43,3 @@ class Case(Resource):
       db.session.commit()
 
       return 200
-         
-      
