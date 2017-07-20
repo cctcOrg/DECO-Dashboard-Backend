@@ -1,6 +1,6 @@
 import sys
 import enum
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Enum, PrimaryKeyConstraint, ForeignKeyConstraint
+from sqlalchemy import Column, ForeignKey, Integer, String, Real, DateTime, Enum, PrimaryKeyConstraint, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -42,138 +42,103 @@ class FileUpload( Base ):
     pathToFile = Column( String(), nullable = False)
     dateOfUpload = Column( DateTime, nullable = False )
 
-class User( Base ):
-    __tablename__ = 'user'
+class Users( Base ):
+    __tablename__ = 'users'
     id = Column (Integer, primary_key = True)
     email = Column( String(), unique=True, nullable = False)
     lastName = Column( String(), nullable = False)
     firstName = Column( String(), nullable = False)    
-    overview = relationship('Overview', backref="user") 
-
-# This table maps relationship between a user and the worksheets they've made
-# One to many
+    case_summary = relationship('CaseSummary', backref="users") 
+    deviceDescription = relationship('DeviceDescription', uselist=False, backref="users")
+    digitalMediaDesc = relationship('DigitalMediaDesc', uselist=False, backref="users")
+    imagingInformation = relationship('ImagingInformation', uselist=False, backref="users")
+    relevantFiles = relationship('RelevantFiles', uselist=False, backref="users")
 
 def dump_datetime( value ):
     if value is None:
         return None
     return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
-
-class Overview( Base ):
-    __tablename__ = 'overview'
+   
+class CaseSummary( Base ):
+    __tablename__ = 'case_summary'
     id = Column( Integer, primary_key = True)
-    dateOfSubmittal = Column( DateTime, nullable = False )
+    dateReceived = Column( DateTime, nullable = False )
+    caseNumber = Column( Integer, nullable = False )
+    caseDescription = Column( String(), nullable = False)
     deviceDesc = Column( String(), nullable = False)
-    imageName = Column( String(), nullable = False)
-    primaryStorageMediaId = Column( String(), nullable = False)
-    backupStorageMediaId = Column( String(), nullable = False)
-    userId = Column( Integer, ForeignKey('user.id'), unique=False, nullable=False)
+    suspectName = Column( String(), nullable = False)
+    collectionLocation = Column( String(), nullable = False)
+    examinerNames = Column( String(), nullable = False)
+    labId = Column( Interger, unique = True, nullable = False)
+    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
 
-    evidenceSummary = relationship('EvidenceSummary', uselist=False, backref="overview")
-    mediaStatus = relationship('MediaStatus', uselist=False, backref="overview")
-    deviceDetails = relationship('DeviceDetails', uselist=False, backref="overview")
-    digitalMediaDesc = relationship('DigitalMediaDesc', uselist=False, backref="overview")
-    imagingInformation = relationship('ImagingInformation', uselist=False, backref="overview")
-    networkCollectionInfo = relationship('NetworkCollectionInfo', uselist=False, backref="overview")
-    cloudCollectionInfo = relationship('CloudCollectionInfo', uselist=False, backref="overview")
-    notes = relationship('Notes', uselist=False, backref="overview")
+    deviceDescription = relationship('DeviceDescription', uselist=False, backref="case_summary")
+
     @property
     def serialize( self ):
         return {
                 'id'              : self.id,
-                'dateOfSubmittal' : dump_datetime(self.dateOfSubmittal),
+                'dateReceived' : dump_datetime(self.dateReceived),
                 'deviceDesc'      : self.deviceDesc,
-                'imageName'       : self.imageName,
-                'primaryStorageMediaId' : self.primaryStorageMediaId,
-                'backupStorageMediaId'  : self.backupStorageMediaId
                 }
-
-
-class EvidenceSummary( Base ):
-    __tablename__ = 'evidence_summary'
+class DeviceDescription( Base ):
+    __tablename__ = 'device_description'
     id = Column( Integer, primary_key = True)
-    # not sure how DateTime works
-    dateOfCollection = Column( DateTime, nullable = False)
-    caseNumber = Column( Integer, nullable = False)
-    subjectName = Column( String(), nullable = False)
-    examinerName = Column( String(), nullable = False)
-    collectionLocation = Column( String(), nullable = False)
-    typeOfCollection = Column(CollectionTypeEnum, nullable = False)
-    worksheetId = Column( Integer, ForeignKey('overview.id'))
-    mediaStatus = relationship("MediaStatus", uselist=False, backref='evidence_summary')
-    @property
-    def serialize( self ):
-        return {
-                'dateOfCollection'  : dump_datetime( self.dateOfCollection ),
-                'caseNumber'        : self.caseNumber,
-                'subjectName'       : self.subjectName,
-                'examinerName'      : self.examinerName,
-                'collectionLocation': self.collectionLocation,
-                'typeOfCollection'  : self.typeOfCollection,
-                'worksheetId'       : self.worksheetId
-                }
-
-
-class MediaStatus( Base ):
-    __tablename__ = 'media_status'
-    evidenceSummaryId = Column( Integer, ForeignKey('evidence_summary.id'), primary_key = True)
-    mediaStatus = Column( MediaStatusEnum, primary_key = True)
-    worksheetId = Column( Integer, ForeignKey('overview.id'))
-    
-class DeviceDetails( Base ):
-    __tablename__ = 'device_details'
-    id = Column( Integer, primary_key = True)
+    deviceDescription = Column( String(), nullable = False)
     make = Column( String(), nullable = False)
     model = Column( String(), nullable = False)
     serialNumber = Column( Integer, nullable = False)
     deviceStatus = Column( String(), nullable = False)
     shutDownMethod = Column( ShutDownMethodEnum, nullable = False)
     systemDateTime = Column( DateTime, nullable = False)
-    # not sure how DateTime works
     localDateTime = Column( DateTime, nullable = False)
-    worksheetId = Column( Integer, ForeignKey('overview.id'))
+    typeOfCollection = Column( CollectionTypeEnum, nullable = False)
+    mediaStatus = Column( MediaStatusEnum, nullable = False)
+    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
+    caseSummaryId = Column( Integer, ForeignKey('case_summary.id'), unique=False, nullable=False)
+    digitalMediaDesc = relationship('DigitalMediaDesc', uselist=False, backref="device_description")
 
-class DigitalMediaDesc( Base ):
-    __tablename__ = 'digital_mediaDesc'
+class DigitalMediaDesc( Base):
+    __tablename__ = "digital_media_desc"
     id = Column( Integer, primary_key = True)
-    dmdMake = Column( String(), nullable = False)
-    dmdModel = Column( String(), nullable = False)
-    oemStorageCapacity = Column( Integer, nullable = False)
-    dmdSerialNumber = Column( Integer, nullable = False)
-    internalSerialNumber = Column( String(), nullable = False)
-    interface = Column( String(), nullable = False)
-    mediaType = Column( String(), nullable = False)
-    worksheetId = Column( Integer, ForeignKey('overview.id'))
+    storageId = Column( Integer, nullable = False)
+    make = Column( String(), nullable = False)
+    model = Column( String(), nullable = False)
+    serialNumber = Column( Integer, nullable = False)
+    capacity = Column( Real, nullable = False)
+    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
+    deviceDescId = Column( Integer, ForeignKey('device_description.id'), unique=False, nullable=False)
+    imagingInformation = relationship('ImagingInformation', uselist=False, backref="digital_media_desc")
 
+   
 class ImagingInformation( Base ):
     __tablename__ = "imaging_information"
     id = Column( Integer, primary_key = True)
     writeBlockMethod = Column( String(), nullable = False)
     imagingTools = Column( String(), nullable =False)
     format = Column( String(), nullable=False)
-    worksheetId = Column( Integer, ForeignKey( 'overview.id'))
+    primaryStorageMediaId = Column( Integer, nullable = False)
+    primaryStorageMediaName = Column( String(), nullable =False)
+    backupStorageMediaId =Column( Integer, nullable = False)
+    backupStorageMediaName = Column( String(), nullable =False)
+    postCollection = Column( String(), nullable =False)
+    size = Column( Real, nullable = False)
+    notes = Column( String(), nullable =False)
+    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
+    digitalMediaDescId = Column( Integer, ForeignKey('digital_media_desc.id'), unique=False, nullable=False)
+    relevantFiles = relationship('RelevantFiles', uselist=False, backref="imaging_information")
 
-class NetworkCollectionInfo( Base ):
-    __tablename__ = 'network_collectionInfo'
+class RelevantFiles( Base):
+    __tablename__ = "relevant_files"
     id = Column( Integer, primary_key = True)
-    connection = Column( String(), nullable=False )
-    collectionType = Column( String(), nullable=False)
-    path = Column( String(), nullable = False)
-    worksheetId = Column( Integer, ForeignKey( 'overview.id'))
-
-class CloudCollectionInfo( Base):
-    __tablename__ = 'cloud_collection_info'
-    id = Column( Integer, primary_key = True)
-    toolUsed = Column( String(), nullable=False)
-    userAccountInfo = Column( String(), nullable=False)
-    worksheetId = Column( Integer, ForeignKey( 'overview.id'))
-
-class Notes( Base ):
-    __tablename__ = 'notes'
-    id = Column( Integer, primary_key = True) 
-    postCollection = Column( String(), nullable=False )
-    generalNotes = Column( String())
-    worksheetId = Column( Integer, ForeignKey( 'overview.id'))
-
+    fileName = Column( String(), nullable =False)
+    path = Column( String(), nullable =False)
+    contentDesc = Column( String(), nullable =False)
+    size = Column( Real, nullable = False)
+    suggestedReviewPlatform = Column( String(), nullable =False)
+    notes = Column( String(), nullable =False)
+    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
+    imagingInfoId = Column( Integer, ForeignKey('imaging_information.id'), unique=False, nullable=False)
 
 engine = create_engine( 'postgresql://postgres@localhost/dbnew')
 Base.metadata.create_all( engine)
