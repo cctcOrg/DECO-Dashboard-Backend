@@ -109,6 +109,16 @@ class DigitalMediaDesc( Base):
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     deviceDescId = Column( Integer, ForeignKey('device_description.id'), unique=False, nullable=False)
     imagingInformation = relationship('ImagingInformation', uselist=False, backref="digital_media_desc")
+    @property
+    def serialize( self ):
+        return {
+                 'id'              : self.id,
+                 'storageId'       : self.storageId,
+                 'make'            : self.make,
+                 'model'           : self.model,
+                 'serialNumber'    : self.serialNumber,
+                 'capacity'        : self.capacity,
+               }
 
    
 class ImagingInformation( Base ):

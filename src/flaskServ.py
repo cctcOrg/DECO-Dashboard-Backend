@@ -38,100 +38,6 @@ class UserInfo(Resource):
     #return Response( json.dumps(info.id, info.firstName), mimetype='application/json' )
     return jsonify( id=info.id, email=info.email, firstName=info.firstName, lastName=info.lastName)
 
-class Form(Resource):
-    def post(self):
-        print( "request: ", request)
-        data = request.get_json()
-        print( "data posted: ", data )
-        user = db.session.query(User).filter_by( id = data['userId']).one() 
-        print( "user id: ", user.id)
-        overview = Overview( 
-                deviceDesc = data['deviceDesc'], 
-                imageName=data['imageName'], 
-                primaryStorageMediaId=data['primaryStorageMediaId'], 
-                backupStorageMediaId=data['backupStorageMediaId'],
-                dateOfSubmittal = datetime.datetime.now(),
-                user = user)
-        evidenceSummary = EvidenceSummary(
-                dateOfCollections = data['dateOfCollections'], 
-                caseNumber = data['caseNumber'], 
-                subjectName = data['subjectName'], 
-                examinerName = data['examinerName'], 
-                collectionLocation = data['collectionLocation'],
-                typeOfCollection = data['typeOfCollection'], 
-                overview = overview)
-        mediaStatus = MediaStatus(
-                mediaStatus = data['mediaStatus'], 
-                overview = overview, 
-                evidence_summary = evidenceSummary)
-        deviceDetails = DeviceDetails( 
-                make = data['make'], 
-                model = data['model'],
-                serialNumber = data['serialNumber'],
-                deviceStatus = data['deviceStatus'],
-                shutDownMethod = data['shutDownMethod'], 
-                systemDateTime = data['systemDateTime'],
-                localDateTime = data['localDateTime'],
-                overview = overview)
-        digitalMediaDesc = DigitalMediaDesc(
-                dmdMake = data['dmdMake'],
-                dmdModel = data['dmdModel'],
-                oemStorageCapacity = data['oemStorageCapacity'],
-                dmdSerialNumber = data['dmdSerialNumber'],
-                internalSerialNumber = data['internalSerialNumber'],
-                interface = data['interface'],
-                mediaType = data['mediaType'],
-                overview = overview)
-        # Grab data from JSON relevant to ImagingInformation and put into database
-        imageinfo = ImagingInformation( 
-                writeBlockMethod = data['writeBlockMethod'], 
-                imagingTools = data['imagingTools'], 
-                format = data['format'],
-                overview = overview)
-
-        # Grab data from JSON relevant to ImagingInformation and put into database
-        netinfo = NetworkCollectionInfo( 
-                connection = data['connection'], 
-                collectionType = data['collectionType'], 
-                path = data['path'],
-                overview = overview)
-        cloudinfo = CloudCollectionInfo( 
-                toolUsed = data['toolUsed'],
-                userAccountInfo = data['userAccountInfo'],
-                overview = overview)
-        notes = Notes( 
-                postCollection = data['postCollection'],
-                generalNotes = data['generalNotes'],
-                overview = overview)
-
-        # add and commit to database
-    
-        # Add and stage for commit to database
-        db.session.add( user)
-        db.session.add( overview )
-        db.session.add( evidenceSummary )
-        db.session.add( deviceDetails )
-        db.session.add( mediaStatus )
-        db.session.add( imageinfo )
-        db.session.add( netinfo )
-        db.session.add( digitalMediaDesc)
-        db.session.add( cloudinfo )
-        db.session.add( notes )
-
-        db.session.commit()
-        return 200
-
-    def options(self):
-        return { 'Allow': 'POST'}, 200
-
-    def get( self ):
-        if request.args.get( 'userId'):
-            forms = db.session.query( Overview ).filter_by( userId = request.args.get('userId')).all()
-            return { "json_list": [i.serialize for i in forms] }
-        if request.args.get( 'id' ):
-            info = db.session.query( Overview ).filter_by( id = request.args.get('id')).one()
-            return {  info.evidenceSummary.serialize  }
-
 class SaveFileFS(Resource):
     def post(self):
         # Get file name
@@ -160,17 +66,27 @@ class SaveFileFS(Resource):
             db.session.commit()
             return 200
 
-class First(Resource):
+class Media(Resource):
     def post(self):
-        print( "request: ", request)
-        data = request.get_json()
-        print( "data posted: ", data )
-        overview = Overview( deviceDesc = data['deviceDesc'], imageName=data['imageName'], primaryStorageMediaId=data['primaryStorageMediaId'], backupStorageMediaId=data['backupStorageMediaId'] )
-        db.session.add( overview )
-        db.session.commit()
-        return 200
+      data = request.get_json()
+      media = DigitalMediaDesc (
+            storageId = data['storageId'],
+            make = data['make'],
+            model = data['model'],
+            serialNumber = data['serialNumber'],
+            capacity = data['capacity'] 
+            users = users
+            deviceDesc = device_description )
+      db.session.add( media )
+      db.session.commit()
+ 
+    def get(self):
+      data = request.get_json();
+      media = db.session.query( DigitalMediaDesc ).filter_by(deviceDescId = data['deviceDescId']).all()
+      return { "digital media list": [i.serialize for i in media] }
 
 api.add_resource( UserInfo, '/evd/user')
+api.add_resource( Media, '/evd/media')
 api.add_resource( Form, '/evd/form')
 api.add_resource( First, '/evd/first')
 api.add_resource( SaveFileFS, '/evd/upload')
