@@ -27,7 +27,8 @@ class Case(Resource):
          examinerName = data['examinerName'],
          dateReceived = data['dateReceived'],
          labId = data['labId'],
-         storageLocation = data['storageLocation'] )
+         storageLocation = data['storageLocation'],
+         userId = data['userId'] )
 
       # Stage case for commit to database
       db.session.add( case )
