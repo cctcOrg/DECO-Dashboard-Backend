@@ -19,15 +19,15 @@ class Case(Resource):
 
       # Create new case object, populated with values from JSON data
       case = CaseSummary(
-         caseId = data['id'],
-         caseDesc = data['caseDesc'],
-         suspectName = data['suspectName'],
-         outsideAgencyNumber = data['outsideAgencyNumber'],
-         collectionLocation = data['collectionLocation'],
-         examinerName = data['examinerName'],
+         id = data['id'],
          dateReceived = data['dateReceived'],
+         caseNumber = data['caseNumber'],
+         caseDescription = data['caseDescription'],
+         deviceDesc = data['deviceDesc'],
+         suspectName = data['suspectName'],
+         collectionLocation = data['collectionLocation'],
+         examinerNames = data['examinerNames'],
          labId = data['labId'],
-         storageLocation = data['storageLocation'],
          userId = data['userId'] )
 
       # Stage case for commit to database
