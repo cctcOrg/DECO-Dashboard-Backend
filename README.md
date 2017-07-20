@@ -4,7 +4,7 @@ GitHub page for CCTC Evidence Backend Team (Duc, Jackson, and Tyler).
 
 # PostgreSQL "Cheat Sheet"
 
-In psql shell:
+### In psql shell: ###
    * Running SQL statements in a file:     `\i [fileName]`
    * List all databases:                   `\list` or `\l`
    * List all tables for current database: `\dt`
@@ -12,7 +12,7 @@ In psql shell:
    * Create database: 	                   `\create database [dbName]`
    * Drop all tables:       		   `DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO postgres; GRANT ALL ON SCHEMA public TO public;`
 
-From terminal/command line:
+### From terminal/command line: ###
    * Running SQL statements in a file:     `psql -f [fileName]`
    
    * If you run `psql` and get `psql: could not connect to server: No such 
