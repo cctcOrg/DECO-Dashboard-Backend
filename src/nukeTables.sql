@@ -1,4 +1,4 @@
--- SQL script that automates clearing of tables.
+-- SQL script that automates DESTROYING of tables.
 \connect newdb
 
 DROP SCHEMA public CASCADE;
