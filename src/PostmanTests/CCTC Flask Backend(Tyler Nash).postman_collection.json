@@ -1,0 +1,73 @@
+{
+	"variables": [],
+	"info": {
+		"name": "CCTC Flask Backend(Tyler Nash)",
+		"_postman_id": "26db4bdc-9208-464e-53e5-e0e2ec334aab",
+		"description": "                                  ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "{{url}}/form",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/form",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"deviceDesc\": \"description\", \n\"imageName\": \"iname\", \n\"primaryStorageMediaId\": 123,\n\"backupStorageMediaId\": 456}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200-New Device Desc Summary 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/deviceinfo",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"caseId\"      : 1,\n  \"deviceDescription\" : \"laptop\",\n  \"make\"        : \"Dell\",\n  \"model\"        : \"sickDellFaptopx001\",\n  \"serialNumber\"    : 42069,\n  \"deviceStatus\"    : \"Piece of Garbage\",\n  \"ShutDownMethod\"  : \"Unknown\",\n  \"systemDateTime\"  : \"2017-04-20 16:20\",\n  \"localDateTime\"    : \"2017-04-20 16:20\",\n  \"typeOfCollection\"  : \"Computer\",\n  \"mediaStatus\"    : \"Removed from system\",\n  \"userId\"      : 1\n}\n\n"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
