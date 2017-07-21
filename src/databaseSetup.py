@@ -1,6 +1,6 @@
 import sys
 import enum
-from sqlalchemy import Column, ForeignKey, Integer, String, Real, DateTime, Enum, PrimaryKeyConstraint, ForeignKeyConstraint
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Enum, PrimaryKeyConstraint, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -35,6 +35,11 @@ ShutDownMethodEnum = ENUM(
    'Left Running',
    name='ShutDownMethodEnum')
 
+def dump_datetime( value ):
+    if value is None:
+        return None
+    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+
 class FileUpload( Base ):
     __tablename__ = 'file_upload'
     id = Column(Integer, primary_key = True)
@@ -54,10 +59,15 @@ class Users( Base ):
     imagingInformation = relationship('ImagingInformation', uselist=False, backref="users")
     relevantFiles = relationship('RelevantFiles', uselist=False, backref="users")
 
-def dump_datetime( value ):
-    if value is None:
-        return None
-    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+    @propery
+    def serialize( self ):
+        return {
+                  'id'          : self.id,
+                  'email'       : self.email,
+                  'lastName'    : self.lastName,
+                  'firstName'   : self.firstName
+               }
+
    
 class CaseSummary( Base ):
     __tablename__ = 'case_summary'
@@ -69,7 +79,7 @@ class CaseSummary( Base ):
     suspectName = Column( String(), nullable = False)
     collectionLocation = Column( String(), nullable = False)
     examinerNames = Column( String(), nullable = False)
-    labId = Column( Interger, unique = True, nullable = False)
+    labId = Column( Integer, unique = True, nullable = False)
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
 
     deviceDescription = relationship('DeviceDescription', uselist=False, backref="case_summary")
@@ -77,9 +87,13 @@ class CaseSummary( Base ):
     @property
     def serialize( self ):
         return {
-                'id'              : self.id,
-                'dateReceived' : dump_datetime(self.dateReceived),
-                'deviceDesc'      : self.deviceDesc,
+                'id'                : self.id,
+                'dateReceived'      : dump_datetime(self.dateReceived),
+                'caseNumber'        : self.caseNumber,
+                'deviceDesc'        : self.deviceDesc,
+                'suspectName'       : self.suspectName, 
+                'collectionLocation': self.collectionLocation,
+                'labId'             : self.labId
                 }
 class DeviceDescription( Base ):
     __tablename__ = 'device_description'
@@ -97,6 +111,21 @@ class DeviceDescription( Base ):
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     caseSummaryId = Column( Integer, ForeignKey('case_summary.id'), unique=False, nullable=False)
     digitalMediaDesc = relationship('DigitalMediaDesc', uselist=False, backref="device_description")
+    @property
+    def serialize( self ):
+        return{
+                'id'                : self.id,
+                'deviceDesc'        : self.deviceDescription,
+                'make'              : self.make,
+                'model'             : self.model, 
+                'serialNumber'      : self.serialNumber,
+                'deviceStatus'      : self.deviceStatus,
+                'shutDownMethod'    : self.shutDownMethod,
+                'systemDateTime'    : dump_datetime(self.systemDateTime),
+                'localDateTime'     : dump_datetime(self.localDateTime),
+                'typeOfCollection'  : self.typeOfCollection,
+                'mediaStatus'       : self.mediaStatus
+              }
 
 class DigitalMediaDesc( Base):
     __tablename__ = "digital_media_desc"
@@ -105,7 +134,7 @@ class DigitalMediaDesc( Base):
     make = Column( String(), nullable = False)
     model = Column( String(), nullable = False)
     serialNumber = Column( Integer, nullable = False)
-    capacity = Column( Real, nullable = False)
+    capacity = Column( Integer, nullable = False)
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     deviceDescId = Column( Integer, ForeignKey('device_description.id'), unique=False, nullable=False)
     imagingInformation = relationship('ImagingInformation', uselist=False, backref="digital_media_desc")
@@ -117,7 +146,7 @@ class DigitalMediaDesc( Base):
                  'make'            : self.make,
                  'model'           : self.model,
                  'serialNumber'    : self.serialNumber,
-                 'capacity'        : self.capacity,
+                 'capacity'        : self.capacity
                }
 
    
@@ -132,11 +161,26 @@ class ImagingInformation( Base ):
     backupStorageMediaId =Column( Integer, nullable = False)
     backupStorageMediaName = Column( String(), nullable =False)
     postCollection = Column( String(), nullable =False)
-    size = Column( Real, nullable = False)
+    size = Column( Integer, nullable = False)
     notes = Column( String(), nullable =False)
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     digitalMediaDescId = Column( Integer, ForeignKey('digital_media_desc.id'), unique=False, nullable=False)
     relevantFiles = relationship('RelevantFiles', uselist=False, backref="imaging_information")
+    @property
+    def serialize( self ):
+        return{
+                'id'                       : self.id,
+                'writeBlockMethod'         : self.writeBlockMethod,
+                'imagingTools'             : self.imagingTools,
+                'format'                   : self.format,
+                'primaryStorageMediaId'    : self.primaryStorageMediaId,
+                'primaryStorageMeidaName'  : self.primaryStorageMediaName,
+                'backupStorageMediaId'     : self.backupStorageMediaId,
+                'backupStorageMediaName'   : self.backupStorageMediaName,
+                'postCollection'           : self.postCollection,
+                'size'                     : self.size,
+                'notes'                    : self.notes
+              }
 
 class RelevantFiles( Base):
     __tablename__ = "relevant_files"
@@ -144,11 +188,23 @@ class RelevantFiles( Base):
     fileName = Column( String(), nullable =False)
     path = Column( String(), nullable =False)
     contentDesc = Column( String(), nullable =False)
-    size = Column( Real, nullable = False)
+    size = Column( Integer, nullable = False)
     suggestedReviewPlatform = Column( String(), nullable =False)
     notes = Column( String(), nullable =False)
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     imagingInfoId = Column( Integer, ForeignKey('imaging_information.id'), unique=False, nullable=False)
+
+    @property
+    def serialize( self ):
+        return{
+                'id'                      : self.id,
+                'fileName'                : self.fileName,
+                'path'                    : self.path,
+                'contentDesc'             : self.contentDesc,
+                'size'                    : self.size,
+                'suggestedReviewPlatform' : self.suggestedReviewPlatform,
+                'notes'                   : self.notes
+              }
 
 engine = create_engine( 'postgresql://postgres@localhost/dbnew')
 Base.metadata.create_all( engine)
