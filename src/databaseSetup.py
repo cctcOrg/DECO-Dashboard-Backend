@@ -85,6 +85,7 @@ class CaseSummary( Base ):
                 'caseDescription'   : self.caseDescription,
                 'suspectName'       : self.suspectName, 
                 'collectionLocation': self.collectionLocation,
+                'examinerNames'     : self.examinerNames,
                 'labId'             : self.labId
                 }
 

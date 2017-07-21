@@ -37,57 +37,54 @@ class UserInfo(Resource):
         info = db.session.query(Users).filter_by(email = request.args.get('email')).first()
         return jsonify( id=info.id, email=info.email, firstName=info.firstName, lastName=info.lastName)
 
+
 class Case(Resource):
    # Return case summary
-    def get(self):
+    def get(self, userId):
         # Get JSON data from frontend containing userId
-        data = request.get_json()
 
         # Get a specific case for logged in user
-        if (caseId == request.args.get('caseId')):
-            case = CaseSummary.query.filter_by(id = caseId, userId=data['userId']).all()
+        if (request.args.get('caseId')):
+            case = db.session.query(CaseSummary).filter_by(id = request.args.get('caseId'), userId=userId).one()
+            return case.serialize
         # Get all cases for logged in user
         else:
-            case = CaseSummary.query.filter_by(userId=data['userId']).all()
-
-        return { "json_list": [i.serialize for i in case] }
+            case = db.session.query(CaseSummary).filter_by(userId=userId).all()
+            return { "json_list": [i.serialize for i in case] }
    
     # Create a new case
-    def post(self):
+    def post(self, userId):
         # Get JSON data from frontend
         data = request.get_json()
 
         # Create new case object, populated with values from JSON data
-        user = db.session.query(Users).filter_by( id = data['userId']).one()
+        user = db.session.query(Users).filter_by( id = userId ).one()
         case = CaseSummary(
-            id = data['id'],
             dateReceived = data['dateReceived'],
             caseNumber = data['caseNumber'],
             caseDescription = data['caseDescription'],
-            deviceDesc = data['deviceDesc'],
             suspectName = data['suspectName'],
             collectionLocation = data['collectionLocation'],
             examinerNames = data['examinerNames'],
+            labId = data['labId'],
             users = user )
 
         # Stage case for commit to database
         db.session.add( case )
-
         # Commit case to database
         db.session.commit()
-
         return 200
 
 class Device( Resource):
-    def get(self):
+    def get(self, userId):
             data = request.get_json() 
-            info = db.session.query(DeviceDescription).filter_by(caseSummaryId = data['caseSummaryId']).all()
+            info = db.session.query(DeviceDesc).filter_by(caseSummaryId = request.args.get('caseId')).all()
             return { "json_list": [i.serialize for i in info] }
 
-    def post( self ):
+    def post( self, userId ):
         data = request.get_json()
-        users = db.session.query(Users).filter_by( id = data['userId']).one()
-        case_summary = db.session.query(CaseSummary).filter_by(id = data['caseId'] ).one()
+        users = db.session.query(Users).filter_by( id = userId).one()
+        case_summary = db.session.query(CaseSummary).filter_by(id = request.args.get('caseId') ).one()
         deviceDesc=DeviceDesc( 
                 deviceDescription = data['deviceDescription'],
                 make = data['make'],
@@ -104,38 +101,38 @@ class Device( Resource):
                 )
         db.session.add( deviceDesc )
         db.session.commit()
+        return 200
 
 class Media(Resource):
-    def post(self):
-      data = request.get_json()
-      users = db.session.query( Users).filter_by( id = data['userId']).one()
-      deviceDesc = db.session.query( deviceDesc ).filter_by( id = data['deviceId']).one()
-      media = DigitalMediaDesc (
-            storageId = data['storageId'],
-            make = data['make'],
-            model = data['model'],
-            serialNumber = data['serialNumber'],
-            capacity = data['capacity'],
-            users = users,
-            device_desc = device_desc )
-      db.session.add( media )
-      db.session.commit()
+    def post(self, userId):
+        data = request.get_json()
+        users = db.session.query( Users).filter_by( id = userId).one()
+        deviceDesc = db.session.query( DeviceDesc ).filter_by( id = request.args.get('deviceId')).one()
+        media = DigitalMediaDesc (
+                storageId = data['storageId'],
+                make = data['make'],
+                model = data['model'],
+                serialNumber = data['serialNumber'],
+                capacity = data['capacity'],
+                users = users,
+                device_desc = deviceDesc )
+        db.session.add( media )
+        db.session.commit()
+        return 200
  
-    def get(self):
-      data = request.get_json();
-      media = db.session.query( DigitalMediaDesc ).filter_by(deviceDescId = data['deviceDescId']).all()
-      return { "digital media list": [i.serialize for i in media] }
+    def get(self, userId):
+        media = db.session.query( DigitalMediaDesc ).filter_by(deviceDescId = request.args.get('deviceId')).all()
+        return { "digital media list": [i.serialize for i in media] }
 
 class Image( Resource):
-    def get(self):
-        data = request.get_json()
-        info = db.session.query(ImageInfo).filter_by(digitalMediaDescId=data['digitalMediaDescId']).one()
+    def get(self, userId):
+        info = db.session.query(ImageInfo).filter_by(digitalMediaDescId=request.args.get('mediaId')).all()
         return { "json_list": [i.serialize for i in info ] }
 
-    def post( self ):
+    def post( self, userId ):
         data = request.get_json()
-        users = db.session.query(Users).filter_by( id = data['userId']).one()
-        digital_media_desc = db.session.query(DigitalMediaDesc).filter_by( id = data['mediaId']).one()
+        users = db.session.query(Users).filter_by( id = userId).one()
+        digital_media_desc = db.session.query(DigitalMediaDesc).filter_by( id = request.args.get('mediaId')).one()
         imageInfo = ImageInfo( 
                 writeBlockMethod = data['writeBlockMethod'], 
                 imagingTools = data['imagingTools'],
@@ -146,11 +143,13 @@ class Image( Resource):
                 backupStorageMediaName = data['backupStorageMediaName'],
                 postCollection = data['postCollection'],
                 size = data['size'],
+                notes = data['notes'],
                 users=users,
                 digital_media_desc = digital_media_desc 
                 )
         db.session.add( imageInfo )
         db.session.commit()
+        return 200
 
 class File(Resource):
     def post(self):
@@ -182,11 +181,11 @@ class File(Resource):
 
 
 api.add_resource( UserInfo, '/evd/user')
-api.add_resource( Case, '/evd/case')
-api.add_resource( Device, '/evd/dev')
-api.add_resource( Media, '/evd/dm')
-api.add_resource( Image, '/evd/img')
-api.add_resource( File, '/evd/file')
+api.add_resource( Case, '/evd/<int:userId>/case')
+api.add_resource( Device, '/evd/<int:userId>/dev')
+api.add_resource( Media, '/evd/<int:userId>/dm')
+api.add_resource( Image, '/evd/<int:userId>/img')
+api.add_resource( File, '/evd/<int:userId>/file')
 
 if __name__ == "__main__":
     app.run( host = app.run( host = '129.65.247.21', port = 5000), debug=True )
