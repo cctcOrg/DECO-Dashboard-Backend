@@ -32,7 +32,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"dateReceived\": \"2017-7-7 04:20\",\n\t\"caseNumber\": 100,\n\t\"deviceDesc\": \"This is some description for some device\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000,\n\t\"userId\": 1\n}"
+					"raw": "{\n\t\"dateReceived\": \"2017-7-7 04:20\",\n\t\"caseNumber\": 100,\n\t\"caseDescription\": \"This is some description for some case\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000,\n\t\"userId\": 1\n}"
 				},
 				"description": ""
 			},
@@ -52,7 +52,7 @@
 							"",
 							"tests[\"dateReceived\"] = jsonData[0].dateReceived === \"2017-7-7 04:20\";",
 							"tests[\"caseNumber\"] = jsonData[0].caseNumber === 100;",
-							"tests[\"deviceDesc\"] = jsonData[0].deviceDesc === \"This is some description for some device\";",
+							"tests[\"caseDescription\"] = jsonData[0].caseDescription  === \"This is some description for some case\";",
 							"tests[\"suspectName\"] = jsonData[0].suspectName === \"Fake Suspect\";",
 							"tests[\"collectionLocation\"] = jsonData[0].collectionLocation === \"San Luis Obispo, CA\";",
 							"tests[\"labId\"] = jsonData[0].labId === 1000;"
