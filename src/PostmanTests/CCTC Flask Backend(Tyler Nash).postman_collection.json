@@ -8,37 +8,6 @@
 	},
 	"item": [
 		{
-			"name": "{{url}}/form",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
-						]
-					}
-				}
-			],
-			"request": {
-				"url": "{{url}}/form",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\"deviceDesc\": \"description\", \n\"imageName\": \"iname\", \n\"primaryStorageMediaId\": 123,\n\"backupStorageMediaId\": 456}"
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
 			"name": "200-New Device Desc Summary 1",
 			"event": [
 				{
@@ -63,8 +32,44 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"caseId\"      : 1,\n  \"deviceDescription\" : \"laptop\",\n  \"make\"        : \"Dell\",\n  \"model\"        : \"sickDellFaptopx001\",\n  \"serialNumber\"    : 42069,\n  \"deviceStatus\"    : \"Piece of Garbage\",\n  \"ShutDownMethod\"  : \"Unknown\",\n  \"systemDateTime\"  : \"2017-04-20 16:20\",\n  \"localDateTime\"    : \"2017-04-20 16:20\",\n  \"typeOfCollection\"  : \"Computer\",\n  \"mediaStatus\"    : \"Removed from system\",\n  \"userId\"      : 1\n}\n\n"
+					"raw": "{\n  \"caseId\"      : 1,\n  \"deviceDescription\" : \"laptop\",\n  \"make\"        : \"Dell\",\n  \"model\"        : \"sickDellFaptopx001\",\n  \"serialNumber\"    : 42069,\n  \"deviceStatus\"    : \"Piece of Garbage\",\n  \"shutDownMethod\"  : \"Unknown\",\n  \"systemDateTime\"  : \"2017-04-20 16:20\",\n  \"localDateTime\"    : \"2017-04-20 16:20\",\n  \"typeOfCollection\"  : \"Computer\",\n  \"mediaStatus\"    : \"Removed from system\",\n  \"userId\"      : 1\n}\n\n"
 				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - GeTDEviCeDeSC-1337",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody)",
+							"",
+							"tests[\"caseId\"] = jsonData[0].caseId === 1;",
+							"tests[\"deviceDescription\"] = jsonData[0].deviceDescription === \"laptop\";",
+							"tests[\"make\"] = jsonData[0].make === \"Dell\";",
+							"tests[\"model\"] = jsonData[0].serialNumber === \"sickDellFaptopx001\";",
+							"tests[\"serialNumber\"] = jsonData[0].deviceStatus === \"Piece of Garbage\";",
+							"tests[\"shutDownMethod\"] = jsonData[0].shutDownMethod === \"Unknown\";",
+							"tests[\"systemDateTime\"] = jsonData[0].systemDateTime === \"2017-04-20 16:20\";",
+							"tests[\"localDateTime\"] = jsonData[0].localDateTime === \"2017-04-20 16:20\";",
+							"tests[\"typeOfCollection\"] = jsonData[0].typeOfCollection === \"Computer\";",
+							"tests[\"mediaStatus\"] = jsonData[0].mediaStatus === \"Removed from system\";",
+							"tests[\"userId\"] = jsonData[0].userId === 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/deviceinfo",
+				"method": "GET",
+				"header": [],
+				"body": {},
 				"description": ""
 			},
 			"response": []
