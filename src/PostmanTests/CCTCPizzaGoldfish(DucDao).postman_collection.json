@@ -32,7 +32,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"dateReceived\": \"2017-7-7 04:20\",\n\t\"caseNumber\": 100,\n\t\"caseDescription\": \"This is some description for some case\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000,\n\t\"userId\": 1\n}"
+					"raw": "{\n\t\"dateReceived\": \"2017-7-7 04:20\",\n\t\"caseNumber\": 100,\n\t\"caseDescription\": \"This is some description for some case\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"examinerName\": \"Fake Examiner\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000,\n\t\"userId\": 1\n}"
 				},
 				"description": ""
 			},
@@ -54,6 +54,7 @@
 							"tests[\"caseNumber\"] = jsonData[0].caseNumber === 100;",
 							"tests[\"caseDescription\"] = jsonData[0].caseDescription  === \"This is some description for some case\";",
 							"tests[\"suspectName\"] = jsonData[0].suspectName === \"Fake Suspect\";",
+							"tests[\"examinerName\"] = jsonData[0].examinerName === \"Fake Examiner\";",
 							"tests[\"collectionLocation\"] = jsonData[0].collectionLocation === \"San Luis Obispo, CA\";",
 							"tests[\"labId\"] = jsonData[0].labId === 1000;"
 						]
@@ -73,6 +74,76 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"id\": 1,\n\t\"dateReceived\": \"7-7-2017\",\n\t\"caseNumber\": 100,\n\t\"deviceDesc\": \"This is some description for some device\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - New Digital Media 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/dm",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"storageId\" : 1,\n\t\"make\": \"Dell\",\n\t\"model\": \"Chromebook 13\",\n\t\"serialNumber\": 123456789\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - Get Digital Media 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody)",
+							"",
+							"tests[\"storageId\"] = jsonData[0].storageId === 1;",
+							"tests[\"make\"] = jsonData[0].make === \"Dell\";",
+							"tests[\"model\"] = jsonData[0].model === \"Chromebook 13\";",
+							"tests[\"serialNumber\"] = jsonData[0] === 123456789",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/dm",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"storageId\" : 1,\n\t\"make\": \"Dell\",\n\t\"model\": \"Chromebook 13\",\n\t\"serialNumber\": 123456789\n}"
 				},
 				"description": ""
 			},
