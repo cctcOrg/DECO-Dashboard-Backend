@@ -149,6 +149,44 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "200 - New Relevant File 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/1/dm",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file\n",
+							"description": "",
+							"type": "file",
+							"src": "FeelsBadMan.png"
+						},
+						{
+							"key": "\"contentDesc\"",
+							"value": "{\"contentDesc\":\"This is a content description\",\n\"suggestedReviewPlatform\":\"Some suggested review platform\",\n\"notes\":\"Some random ass notes in this random ass JSON\"\n}",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }
