@@ -1,7 +1,7 @@
 {
 	"variables": [],
 	"info": {
-		"name": "CCTC PizzaGoldfish (Duc Dao)",
+		"name": "CCTCPizzaGoldfish(DucDao)",
 		"_postman_id": "a6cc317f-2ea2-1fa4-37c3-b88d7cb94ab6",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
@@ -32,7 +32,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"id\": 1,\n\t\"dateReceived\": \"7-7-2017\",\n\t\"caseNumber\": 100,\n\t\"deviceDesc\": \"This is some description for some device\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000\n}"
+					"raw": "{\n\t\"dateReceived\": \"2017-7-7 04:20\",\n\t\"caseNumber\": 100,\n\t\"caseDescription\": \"This is some description for some case\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000,\n\t\"userId\": 1\n}"
 				},
 				"description": ""
 			},
@@ -48,12 +48,11 @@
 						"exec": [
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"",
-							"var jsonData = JSON.parse(responseBody)",
+							"var jsonData = JSON.parse(responseBody);",
 							"",
-							"tests[\"id\"] = jsonData[\"id\"] === 1;",
-							"tests[\"dateReceived\"] = jsonData[0].dateReceived === \"7-7-2017\";",
+							"tests[\"dateReceived\"] = jsonData[0].dateReceived === \"2017-7-7 04:20\";",
 							"tests[\"caseNumber\"] = jsonData[0].caseNumber === 100;",
-							"tests[\"deviceDesc\"] = jsonData[0].deviceDesc === \"This is some description for some device\";",
+							"tests[\"caseDescription\"] = jsonData[0].caseDescription  === \"This is some description for some case\";",
 							"tests[\"suspectName\"] = jsonData[0].suspectName === \"Fake Suspect\";",
 							"tests[\"collectionLocation\"] = jsonData[0].collectionLocation === \"San Luis Obispo, CA\";",
 							"tests[\"labId\"] = jsonData[0].labId === 1000;"

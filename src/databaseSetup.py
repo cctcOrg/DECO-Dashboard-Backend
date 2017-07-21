@@ -68,7 +68,6 @@ class CaseSummary( Base ):
     dateReceived = Column( DateTime, nullable = False )
     caseNumber = Column( Integer, nullable = False )
     caseDescription = Column( String(), nullable = False)
-    deviceDesc = Column( String(), nullable = False)
     suspectName = Column( String(), nullable = False)
     collectionLocation = Column( String(), nullable = False)
     examinerNames = Column( String(), nullable = False)
@@ -83,11 +82,12 @@ class CaseSummary( Base ):
                 'id'                : self.id,
                 'dateReceived'      : dump_datetime(self.dateReceived),
                 'caseNumber'        : self.caseNumber,
-                'deviceDesc'        : self.deviceDesc,
+                'caseDescription'   : self.caseDescription,
                 'suspectName'       : self.suspectName, 
                 'collectionLocation': self.collectionLocation,
                 'labId'             : self.labId
                 }
+
 class DeviceDesc( Base ):
     __tablename__ = 'device_desc'
     id = Column( Integer, primary_key = True)

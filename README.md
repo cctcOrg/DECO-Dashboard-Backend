@@ -1,6 +1,6 @@
-# CCTC Evidence Backend
+# CCTC Evidence Dashboard Backend
 
-GitHub page for CCTC Evidence Backend Team (Duc, Jackson, and Tyler).
+GitHub page for CCTC Evidence Dashboard Backend Team (Duc, Jackson, and Tyler).
 
 # PostgreSQL "Cheat Sheet"
 
