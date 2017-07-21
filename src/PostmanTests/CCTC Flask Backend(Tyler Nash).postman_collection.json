@@ -73,6 +73,74 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "200-New-ImageInfo-Dr-Malcom",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\"\t\t\t\t\t:\t1,\n\t\"mediaId\"\t\t\t\t\t:\t1,\n\t\"writeBlockMethod\"\t\t\t: \"hahahwaharahaha\",\n\t\"imagingTools\"\t\t\t\t: \"Doctor\",\n\t\"format\"\t\t\t\t\t: \"Malcom\",\n\t\"primaryStorageMediaId\"\t\t: 420,\n\t\"primaryStorageMediaName\"\t: \"Dig up dinosaurs\",\n\t\"backupStorageMediaId\"\t\t: 69,\n\t\"backupStorageMediaName\"\t: \"Try to\",\n\t\"postCollection\"\t\t\t: \"Friggen Frogs!\",\n\t\"size\"\t\t\t\t\t\t: 123,\n\t\"notes\"\t\t\t\t\t\t: \"human spirit is rising!!!11\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200-GetImageInfo-1G0d@lexJ0neS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"userId\"] = jsonData[0].userId === 1;",
+							"tests[\"mediaId\"] = jsonData[0].mediaId === 1;",
+							"tests[\"writeBlockMethod\"] = jsonData[0].writeBlockMethod  === \"hahahwaharahaha\";",
+							"tests[\"imagingTools\"] = jsonData[0].imagingTools === \"Doctor\";",
+							"tests[\"format\"] = jsonData[0].format === \"Malcom\";",
+							"tests[\"primaryStorageMediaId\"] = jsonData[0].primaryStorageMediaId === 420;",
+							"tests[\"primaryStorageMediaName\"] = jsonData[0].primaryStorageMediaName === \"Dig up dinosaurs\";",
+							"tests[\"backupStorageMediaId\"] = jsonData[0].backupStorageMediaId === 69;",
+							"tests[\"backupStorageMediaName\"] = jsonData[0].backupStorageMediaName === \"Try to\";",
+							"tests[\"postCollection\"] = jsonData[0].postCollection === \"Friggen Frogs!\";",
+							"tests[\"size\"] = jsonData[0].size === 123;",
+							"tests[\"notes\"] = jsonData[0].notes === \"human spirit is rising!!!11\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }
