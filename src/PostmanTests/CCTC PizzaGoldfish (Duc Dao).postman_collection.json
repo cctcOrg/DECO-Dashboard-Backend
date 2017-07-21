@@ -1,0 +1,83 @@
+{
+	"variables": [],
+	"info": {
+		"name": "CCTC PizzaGoldfish (Duc Dao)",
+		"_postman_id": "a6cc317f-2ea2-1fa4-37c3-b88d7cb94ab6",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "200 - New Case Summary 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/case",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"dateReceived\": \"7-7-2017\",\n\t\"caseNumber\": 100,\n\t\"deviceDesc\": \"This is some description for some device\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - Get Case Summary 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody)",
+							"",
+							"tests[\"id\"] = jsonData[\"id\"] === 1;",
+							"tests[\"dateReceived\"] = jsonData[0].dateReceived === \"7-7-2017\";",
+							"tests[\"caseNumber\"] = jsonData[0].caseNumber === 100;",
+							"tests[\"deviceDesc\"] = jsonData[0].deviceDesc === \"This is some description for some device\";",
+							"tests[\"suspectName\"] = jsonData[0].suspectName === \"Fake Suspect\";",
+							"tests[\"collectionLocation\"] = jsonData[0].collectionLocation === \"San Luis Obispo, CA\";",
+							"tests[\"labId\"] = jsonData[0].labId === 1000;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/case",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"dateReceived\": \"7-7-2017\",\n\t\"caseNumber\": 100,\n\t\"deviceDesc\": \"This is some description for some device\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
