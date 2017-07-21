@@ -104,7 +104,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"storageId\" : 1,\n\t\"make\": \"Dell\",\n\t\"model\": \"Chromebook 13\",\n\t\"serialNumber\": 123456789\n}"
+					"raw": "{\n\t\"storageId\" : 1,\n\t\"make\": \"Dell\",\n\t\"model\": \"Chromebook 13\",\n\t\"serialNumber\": 123456789,\n\t\"capacity\": 8000\n}"
 				},
 				"description": ""
 			},
@@ -125,7 +125,8 @@
 							"tests[\"storageId\"] = jsonData[0].storageId === 1;",
 							"tests[\"make\"] = jsonData[0].make === \"Dell\";",
 							"tests[\"model\"] = jsonData[0].model === \"Chromebook 13\";",
-							"tests[\"serialNumber\"] = jsonData[0] === 123456789",
+							"tests[\"serialNumber\"] = jsonData[0].serialNumber === 123456789",
+							"tests[\"capacity\"] = jsonData[0].capacity === 8000",
 							""
 						]
 					}
