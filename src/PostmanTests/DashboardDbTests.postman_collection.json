@@ -1,0 +1,554 @@
+{
+	"variables": [],
+	"info": {
+		"name": "DashboardDbTests",
+		"_postman_id": "321877e4-fc61-9de5-5613-1de069a86d7d",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "200-New Device Desc Summary 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "{{url}}/evd/1/dev?caseId=2",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"evd",
+						"1",
+						"dev"
+					],
+					"query": [
+						{
+							"key": "caseId",
+							"value": "2",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n  \"deviceDescription\" : \"laptop\",\n  \"make\"        : \"Dell\",\n  \"model\"        : \"sickDellFaptopx001\",\n  \"serialNumber\"    : 42069,\n  \"deviceStatus\"    : \"Piece of Garbage\",\n  \"shutDownMethod\"  : \"Unknown\",\n  \"systemDateTime\"  : \"2017-04-20 16:20\",\n  \"localDateTime\"    : \"2017-04-20 16:20\",\n  \"typeOfCollection\"  : \"Computer\",\n  \"mediaStatus\"    : \"Removed from system\"\n}\n\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - GeTDEviCeDeSC-1337",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody)",
+							"",
+							"tests[\"caseId\"] = jsonData[0].caseId === 1;",
+							"tests[\"deviceDescription\"] = jsonData[0].deviceDescription === \"laptop\";",
+							"tests[\"make\"] = jsonData[0].make === \"Dell\";",
+							"tests[\"model\"] = jsonData[0].serialNumber === \"sickDellFaptopx001\";",
+							"tests[\"serialNumber\"] = jsonData[0].deviceStatus === \"Piece of Garbage\";",
+							"tests[\"shutDownMethod\"] = jsonData[0].shutDownMethod === \"Unknown\";",
+							"tests[\"systemDateTime\"] = jsonData[0].systemDateTime === \"2017-04-20 16:20\";",
+							"tests[\"localDateTime\"] = jsonData[0].localDateTime === \"2017-04-20 16:20\";",
+							"tests[\"typeOfCollection\"] = jsonData[0].typeOfCollection === \"Computer\";",
+							"tests[\"mediaStatus\"] = jsonData[0].mediaStatus === \"Removed from system\";",
+							"tests[\"userId\"] = jsonData[0].userId === 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "{{url}}/evd/1/dev?caseId=2",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"evd",
+						"1",
+						"dev"
+					],
+					"query": [
+						{
+							"key": "caseId",
+							"value": "2",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200-GetImageInfo-1G0d@lexJ0neS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"userId\"] = jsonData[0].userId === 1;",
+							"tests[\"mediaId\"] = jsonData[0].mediaId === 1;",
+							"tests[\"writeBlockMethod\"] = jsonData[0].writeBlockMethod  === \"hahahwaharahaha\";",
+							"tests[\"imagingTools\"] = jsonData[0].imagingTools === \"Doctor\";",
+							"tests[\"format\"] = jsonData[0].format === \"Malcom\";",
+							"tests[\"primaryStorageMediaId\"] = jsonData[0].primaryStorageMediaId === 420;",
+							"tests[\"primaryStorageMediaName\"] = jsonData[0].primaryStorageMediaName === \"Dig up dinosaurs\";",
+							"tests[\"backupStorageMediaId\"] = jsonData[0].backupStorageMediaId === 69;",
+							"tests[\"backupStorageMediaName\"] = jsonData[0].backupStorageMediaName === \"Try to\";",
+							"tests[\"postCollection\"] = jsonData[0].postCollection === \"Friggen Frogs!\";",
+							"tests[\"size\"] = jsonData[0].size === 123;",
+							"tests[\"notes\"] = jsonData[0].notes === \"human spirit is rising!!!11\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "{{url}}/evd/1/img?mediaId=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"evd",
+						"1",
+						"img"
+					],
+					"query": [
+						{
+							"key": "mediaId",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200-New-ImageInfo-Dr-Malcom",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "{{url}}/evd/1/img?mediaId=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"evd",
+						"1",
+						"img"
+					],
+					"query": [
+						{
+							"key": "mediaId",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\"\t\t\t\t\t:\t1,\n\t\"mediaId\"\t\t\t\t\t:\t1,\n\t\"writeBlockMethod\"\t\t\t: \"hahahwaharahaha\",\n\t\"imagingTools\"\t\t\t\t: \"Doctor\",\n\t\"format\"\t\t\t\t\t: \"Malcom\",\n\t\"primaryStorageMediaId\"\t\t: 420,\n\t\"primaryStorageMediaName\"\t: \"Dig up dinosaurs\",\n\t\"backupStorageMediaId\"\t\t: 69,\n\t\"backupStorageMediaName\"\t: \"Try to\",\n\t\"postCollection\"\t\t\t: \"Friggen Frogs!\",\n\t\"size\"\t\t\t\t\t\t: 123,\n\t\"notes\"\t\t\t\t\t\t: \"human spirit is rising!!!11\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - Get Digital Media 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody)",
+							"",
+							"tests[\"storageId\"] = jsonData[0].storageId === 1;",
+							"tests[\"make\"] = jsonData[0].make === \"Dell\";",
+							"tests[\"model\"] = jsonData[0].model === \"Chromebook 13\";",
+							"tests[\"serialNumber\"] = jsonData[0].serialNumber === 123456789",
+							"tests[\"capacity\"] = jsonData[0].capacity === 8000",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "{{url}}/evd/1/dm?deviceId=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"evd",
+						"1",
+						"dm"
+					],
+					"query": [
+						{
+							"key": "deviceId",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"storageId\" : 1,\n\t\"make\": \"Dell\",\n\t\"model\": \"Chromebook 13\",\n\t\"serialNumber\": 123456789\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - New Digital Media 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "{{url}}/evd/1/dm?deviceId=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"evd",
+						"1",
+						"dm"
+					],
+					"query": [
+						{
+							"key": "deviceId",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"storageId\" : 1,\n\t\"make\": \"Dell\",\n\t\"model\": \"Chromebook 13\",\n\t\"serialNumber\": 123456789,\n\t\"capacity\": 8000\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - Get Case Summary All",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"dateReceived\"] = jsonData[0].dateReceived === \"2017-7-7 04:20\";",
+							"tests[\"caseNumber\"] = jsonData[0].caseNumber === 100;",
+							"tests[\"caseDescription\"] = jsonData[0].caseDescription  === \"This is some description for some case\";",
+							"tests[\"suspectName\"] = jsonData[0].suspectName === \"Fake Suspect\";",
+							"tests[\"collectionLocation\"] = jsonData[0].collectionLocation === \"San Luis Obispo, CA\";",
+							"tests[\"labId\"] = jsonData[0].labId === 1000;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/1/case",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"dateReceived\": \"7-7-2017\",\n\t\"caseNumber\": 100,\n\t\"deviceDesc\": \"This is some description for some device\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - New Case Summary 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/1/case",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"dateReceived\": \"2017-7-7 04:20\",\n\t\"caseNumber\": 7,\n\t\"caseDescription\": \"This is some description for some case\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"examinerNames\": \"some examiner\",\n\t\"labId\": 104\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - Get User",
+			"request": {
+				"url": {
+					"raw": "{{url}}/evd/user?email=a@gmail.com",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"evd",
+						"user"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "a@gmail.com",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "get user"
+			},
+			"response": []
+		},
+		{
+			"name": "200 -Post User",
+			"request": {
+				"url": "{{url}}/evd/user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\": \"b@gmail.com\", \n\"firstName\": \"Jackson\", \n\"lastName\": \"Kurtz\" \n}"
+				},
+				"description": "get user"
+			},
+			"response": []
+		},
+		{
+			"name": "200 - Get Case Summary Specific",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"dateReceived\"] = jsonData[0].dateReceived === \"2017-7-7 04:20\";",
+							"tests[\"caseNumber\"] = jsonData[0].caseNumber === 100;",
+							"tests[\"caseDescription\"] = jsonData[0].caseDescription  === \"This is some description for some case\";",
+							"tests[\"suspectName\"] = jsonData[0].suspectName === \"Fake Suspect\";",
+							"tests[\"collectionLocation\"] = jsonData[0].collectionLocation === \"San Luis Obispo, CA\";",
+							"tests[\"labId\"] = jsonData[0].labId === 1000;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "{{url}}/evd/1/case?caseId=7",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"evd",
+						"1",
+						"case"
+					],
+					"query": [
+						{
+							"key": "caseId",
+							"value": "7",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"dateReceived\": \"7-7-2017\",\n\t\"caseNumber\": 100,\n\t\"deviceDesc\": \"This is some description for some device\",\n\t\"suspectName\": \"Fake Suspect\",\n\t\"collectionLocation\": \"San Luis Obispo, CA\",\n\t\"labId\": 1000\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "200 - Send File Dashboard",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] + responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/evd/1/file",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"description": "",
+							"type": "file",
+							"src": "file.txt"
+						},
+						{
+							"key": "",
+							"value": "{\n\"contentDesc\": \"some description\", \n\"suggestedReviewPlatform\": \"review platform\", \n\"notes\": \"this is a note\" \n}",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": "post request to server"
+			},
+			"response": []
+		}
+	]
+}
