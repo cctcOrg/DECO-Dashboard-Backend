@@ -15,7 +15,7 @@ app.debug=True
 api = Api(app)
 db = SQLAlchemy(app)
 CORS(app)
-UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/CCTC-DATABASE/Uploads'      
+UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
 #UPLOAD_FOLDER = '/srv/http/CCTC-DATABASE/Uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -151,16 +151,24 @@ class Image( Resource):
         db.session.commit()
         return 200
 
-class File(Resource):
-    def post(self):
+
+class SaveFileFS(Resource):   
+    def post(self, userId):
         # Get file name
         if 'file' not in request.files:
             print ('No file in request')
             return 400
+        users = db.session.query(Users).filter_by( id = userId).one()
+        image_info = db.session.query(ImageInfo).filter_by( id = request.args.get('imageId')).one()
+ 
+      # Get JSON containing some meta data of the file
+        data = dict( request.form )
+        print ( "request.form: ", request.form )
+        print ("data dict: ", data)
         newFile = request.files['file']
         print( newFile.filename )
         if newFile:
-            # Get file name securely
+        # Get file name securely
             fileName = secure_filename(newFile.filename)
 
             # Get a new path
@@ -168,24 +176,35 @@ class File(Resource):
 
             # Save file to new path
             newFile.save(newPath)
+
+            # Get file size TODO: Figure out if st_size returns in MB
+            fileSize = os.stat(UPLOAD_FOLDER + '/' + fileName).st_size
+
             # Create entry in database
-            fileToDB = FileUpload(
-                fileName = fileName, 
-                pathToFile = os.path.abspath(newPath),
-                dateOfUpload = datetime.datetime.now() )
+            fileToDB = RelevantFiles(
+                fileName = fileName,  
+                path = os.path.abspath(newPath),
+                contentDesc = data["contentDesc"],
+                size = fileSize,
+                suggestedReviewPlatform = data["suggestedReviewPlatform"],
+                notes = data["notes"],
+                users = users,
+                image_info = image_info
+                )
 
-            # Add and stage for commit to database
-            db.session.add( fileToDB )
-            db.session.commit()
-            return 200
 
+      # Add and stage for commit to database
+        db.session.add( fileToDB )
+        db.session.commit()
+
+        return 200
 
 api.add_resource( UserInfo, '/evd/user')
 api.add_resource( Case, '/evd/<int:userId>/case')
 api.add_resource( Device, '/evd/<int:userId>/dev')
 api.add_resource( Media, '/evd/<int:userId>/dm')
 api.add_resource( Image, '/evd/<int:userId>/img')
-api.add_resource( File, '/evd/<int:userId>/file')
+api.add_resource( SaveFileFS, '/evd/<int:userId>/file')
 
 if __name__ == "__main__":
     app.run( host = app.run( host = '129.65.247.21', port = 5000), debug=True )
