@@ -163,7 +163,7 @@ class SaveFileFS(Resource):
         image_info = db.session.query(ImageInfo).filter_by( id = request.args.get('imageId')).one()
  
       # Get JSON containing some meta data of the file
-        data = dict( request.form )
+        data = request.form
         print ( "request.form: ", request.form )
         print ("data dict: ", data)
         newFile = request.files['file']
