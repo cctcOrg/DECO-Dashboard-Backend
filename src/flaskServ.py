@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 import datetime
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/dashboarddb'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:cctc@localhost/newdb'
 app.debug=True
 api = Api(app)
 db = SQLAlchemy(app)
@@ -208,4 +209,4 @@ api.add_resource( SaveFileFS, '/evd/<int:userId>/file')
 
 if __name__ == "__main__":
     app.run( host = app.run( host = '129.65.247.21', port = 5000), debug=True )
-    #app.run( host = app.run( host = '129.65.100.50', port = 5000), debug=True )
+    #app.run( host = app.run( host = '129.65.100.50', port = 6000), debug=True )
