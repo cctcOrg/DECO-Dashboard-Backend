@@ -17,7 +17,7 @@ api = Api(app)
 db = SQLAlchemy(app)
 CORS(app)
 UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
-#UPLOAD_FOLDER = '/srv/http/CCTC-DATABASE/Uploads'
+#UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 class UserInfo(Resource):
