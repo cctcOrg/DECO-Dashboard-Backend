@@ -10,27 +10,35 @@ import os
 from werkzeug.utils import secure_filename
 import datetime
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/dashboarddb'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:cctc@localhost/newdb'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/dashboarddb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:cctc@localhost/newdb'
 app.debug=True
 api = Api(app)
 db = SQLAlchemy(app)
 CORS(app)
-UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
-#UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
+#UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
+UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 class UserInfo(Resource):
   # create a new user 
     def post(self):
+        print("GETTING DATA FROM JSON...")
+
         data = request.get_json()
+
+        print("CREATING ROW FOR DB INSERTION...")
         users = Users( 
             email = data['email'],
             lastName = data['lastName'],
             firstName = data['firstName'] )
+
+        print("PUSHING TO DB...")
         #stage and commit to database
         db.session.add( users)
         db.session.commit()
+
+        print("RETURNING 200")
         return 200
 
     def get(self):
@@ -208,5 +216,5 @@ api.add_resource( Image, '/evd/<int:userId>/img')
 api.add_resource( SaveFileFS, '/evd/<int:userId>/file')
 
 if __name__ == "__main__":
-    app.run( host = app.run( host = '129.65.247.21', port = 5000), debug=True )
-    #app.run( host = app.run( host = '129.65.100.50', port = 6000), debug=True )
+    #app.run( host = app.run( host = '129.65.247.21', port = 5000), debug=True )
+    app.run( host = app.run( host = '129.65.100.50', port = 5000, use_debugger=True, threaded=True), debug=True )
