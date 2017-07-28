@@ -86,7 +86,8 @@ class CaseSummary( Base ):
                 'suspectName'       : self.suspectName, 
                 'collectionLocation': self.collectionLocation,
                 'examinerNames'     : self.examinerNames,
-                'labId'             : self.labId
+                'labId'             : self.labId,
+                'userId'            : self.userId,
                 }
 
 class DeviceDesc( Base ):
@@ -104,7 +105,7 @@ class DeviceDesc( Base ):
     mediaStatus = Column( MediaStatusEnum, nullable = False)
 
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
-    caseSummaryId = Column( Integer, ForeignKey('case_summary.id'), unique=False, nullable=False)
+    caseId = Column( Integer, ForeignKey('case_summary.id'), unique=False, nullable=False)
     digitalMediaDesc = relationship('DigitalMediaDesc', backref="device_desc")
 
     @property
@@ -120,7 +121,9 @@ class DeviceDesc( Base ):
                 'systemDateTime'    : dump_datetime(self.systemDateTime),
                 'localDateTime'     : dump_datetime(self.localDateTime),
                 'typeOfCollection'  : self.typeOfCollection,
-                'mediaStatus'       : self.mediaStatus
+                'mediaStatus'       : self.mediaStatus,
+                'caseId'            : self.caseId,
+                'userId'            : self.userId
               }
 
 class DigitalMediaDesc( Base):
@@ -144,7 +147,9 @@ class DigitalMediaDesc( Base):
                  'make'            : self.make,
                  'model'           : self.model,
                  'serialNumber'    : self.serialNumber,
-                 'capacity'        : self.capacity
+                 'capacity'        : self.capacity,
+                 'deviceDescId'    : self.deviceDescId,
+                 'userId'          : self.userId
                }
 
    
@@ -179,7 +184,9 @@ class ImageInfo( Base ):
                 'backupStorageMediaName'   : self.backupStorageMediaName,
                 'postCollection'           : self.postCollection,
                 'size'                     : self.size,
-                'notes'                    : self.notes
+                'notes'                    : self.notes,
+                'digitalMediaDescId'       : self.digitalMediaDescId,
+                'userId'                   : self.userId
               }
 
 class RelevantFiles( Base):
@@ -191,6 +198,7 @@ class RelevantFiles( Base):
     size = Column( Integer, nullable = False)
     suggestedReviewPlatform = Column( String(), nullable =False)
     notes = Column( String(), nullable =False)
+    
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     imagingInfoId = Column( Integer, ForeignKey('image_info.id'), unique=False, nullable=False)
 
@@ -203,7 +211,9 @@ class RelevantFiles( Base):
                 'contentDesc'             : self.contentDesc,
                 'size'                    : self.size,
                 'suggestedReviewPlatform' : self.suggestedReviewPlatform,
-                'notes'                   : self.notes
+                'notes'                   : self.notes,
+                'imagingInfoId'           : self.imagingInfoId,
+                'userId'                  : self.userId
               }
 
         
