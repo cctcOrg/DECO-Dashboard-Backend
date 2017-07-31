@@ -23,22 +23,23 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 class UserInfo(Resource):
   # create a new user 
     def post(self):
-        print("GETTING DATA FROM JSON...")
+        var post = "[POST USER] "
+        print(post + "Getting data from JSON...")
 
         data = request.get_json()
 
-        print("CREATING ROW FOR DB INSERTION...")
+        print(post + "Creating row for DB insertion...")
         users = Users( 
             email = data['email'],
             lastName = data['lastName'],
             firstName = data['firstName'] )
 
-        print("PUSHING TO DB...")
+        print(post + "Inserting into DB...")
         #stage and commit to database
         db.session.add( users)
         db.session.commit()
 
-        print("RETURNING 200")
+        print(post + "RETURNING 200")
         return 200
 
     def get(self):
@@ -208,12 +209,29 @@ class SaveFileFS(Resource):
 
         return 200
 
+# Clear all contents in database
+class Nuke(Resource):
+    def delete(self):
+       # Remove all entries/rows/tuples starting from RelevantFiles and working backwards
+       # Work backwards to avoid violating foreign key constraints
+       db.RelevantFiles.query.delete()
+       db.ImageInfo.query.delete()
+       db.DigitalMediaDesc.query.delete()
+       db.DeviceDesc.query.delete()
+       db.CaseSummary.query.delete()
+       db.Users.query.delete()
+
+       return "NUKED"
+
 api.add_resource( UserInfo, '/evd/user')
 api.add_resource( Case, '/evd/<int:userId>/case')
 api.add_resource( Device, '/evd/<int:userId>/dev')
 api.add_resource( Media, '/evd/<int:userId>/dm')
 api.add_resource( Image, '/evd/<int:userId>/img')
 api.add_resource( SaveFileFS, '/evd/<int:userId>/file')
+
+# Endpoint to remove all entries from all tables in the DB
+api.add_resource( Nuke, '/evd/nuke')
 
 if __name__ == "__main__":
     #app.run( host = app.run( host = '129.65.247.21', port = 5000), debug=True )
