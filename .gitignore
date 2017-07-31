@@ -1,1 +1,5 @@
+# Ignore bash scripts
 *.sh
+
+# Ignore all files in Uploads folder
+./Uploads
