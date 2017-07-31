@@ -24,5 +24,8 @@ GitHub page for CCTC Evidence Dashboard Backend Team (Duc, Jackson, and Tyler).
 
 # CURL Request to Flask Server
 
-Post request that creates 'Overview' object:
-`curl -H "Content-Type: application/json" -X POST -d '{"deviceDesc": "description", "imageName": "iname", "primaryStorageMediaId": 123, "backupStorageMediaId": 456}' http://localhost:5000/form`
+Post request that creates 'User' entry:
+`curl -H "Content-Type: application/json" -X POST -d '{"email":
+"someEmail@domain.com", 
+"lastName": "Jones", 
+"firstName": "Alex"}'http://localhost:5000/evd/user`
