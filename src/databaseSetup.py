@@ -105,14 +105,14 @@ class DeviceDesc( Base ):
     mediaStatus = Column( MediaStatusEnum, nullable = False)
 
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
-    caseId = Column( Integer, ForeignKey('case_summary.id'), unique=False, nullable=False)
+    caseSummaryId = Column( Integer, ForeignKey('case_summary.id'), unique=False, nullable=False)
     digitalMediaDesc = relationship('DigitalMediaDesc', backref="device_desc")
 
     @property
     def serialize( self ):
         return{
                 'id'                : self.id,
-                'deviceDesc'        : self.deviceDescription,
+                'deviceDescription' : self.deviceDescription,
                 'make'              : self.make,
                 'model'             : self.model, 
                 'serialNumber'      : self.serialNumber,
@@ -122,7 +122,7 @@ class DeviceDesc( Base ):
                 'localDateTime'     : dump_datetime(self.localDateTime),
                 'typeOfCollection'  : self.typeOfCollection,
                 'mediaStatus'       : self.mediaStatus,
-                'caseId'            : self.caseId,
+                'caseSummaryId'     : self.caseSummaryId,
                 'userId'            : self.userId
               }
 
