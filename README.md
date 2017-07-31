@@ -25,7 +25,8 @@ GitHub page for CCTC Evidence Dashboard Backend Team (Duc, Jackson, and Tyler).
 # CURL Request to Flask Server
 
 Post request that creates 'User' entry:
-`curl -H "Content-Type: application/json" -X POST -d '{"email":
-"someEmail@domain.com", 
+`curl -H "Content-Type: application/json" -X POST -d 
+'{"email": "someEmail@domain.com", 
 "lastName": "Jones", 
-"firstName": "Alex"}'http://localhost:5000/evd/user`
+"firstName": "Alex"}' 
+http://localhost:5000/evd/user`
