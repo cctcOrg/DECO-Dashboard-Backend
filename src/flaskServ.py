@@ -23,7 +23,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 class UserInfo(Resource):
   # create a new user 
     def post(self):
-        var post = "[POST USER] "
+        post = "[POST USER] "
         print(post + "Getting data from JSON...")
 
         data = request.get_json()
@@ -212,16 +212,40 @@ class SaveFileFS(Resource):
 # Clear all contents in database
 class Nuke(Resource):
     def delete(self):
-       # Remove all entries/rows/tuples starting from RelevantFiles and working backwards
-       # Work backwards to avoid violating foreign key constraints
-       db.RelevantFiles.query.delete()
-       db.ImageInfo.query.delete()
-       db.DigitalMediaDesc.query.delete()
-       db.DeviceDesc.query.delete()
-       db.CaseSummary.query.delete()
-       db.Users.query.delete()
+        nuke = "[NUKE] "
 
-       return "NUKED"
+        # Remove all entries/rows/tuples starting from RelevantFiles and working backwards
+        print (nuke + "Clearing relevant files table...")
+        db.session.query(RelevantFiles).delete()
+        db.session.commit()
+        db.engine.execute("ALTER SEQUENCE relevant_files_id_seq RESTART WITH 1;")
+
+        print (nuke + "Clearing image info table...")
+        db.session.query(ImageInfo).delete()
+        db.session.commit()
+        db.engine.execute("ALTER SEQUENCE image_info_id_seq RESTART WITH 1;")
+
+        print (nuke + "Clearing digital media description table...")
+        db.session.query(DigitalMediaDesc).delete()
+        db.session.commit()
+        db.engine.execute("ALTER SEQUENCE digital_media_desc_id_seq RESTART WITH 1;")
+        
+        print (nuke + "Clearing device table...")
+        db.session.query(DeviceDesc).delete()
+        db.session.commit()
+        db.engine.execute("ALTER SEQUENCE device_desc_id_seq RESTART WITH 1;")
+
+        print (nuke + "Clearing case summary table...")
+        db.session.query(CaseSummary).delete()
+        db.session.commit()
+        db.engine.execute("ALTER SEQUENCE case_summary_id_seq RESTART WITH 1;")
+
+        print (nuke + "Clearing users table...")
+        db.session.query(Users).delete()
+        db.session.commit()
+        db.engine.execute("ALTER SEQUENCE users_id_seq RESTART WITH 1;")
+
+        return "NUKED"
 
 api.add_resource( UserInfo, '/evd/user')
 api.add_resource( Case, '/evd/<int:userId>/case')
