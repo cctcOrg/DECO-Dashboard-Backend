@@ -179,7 +179,7 @@ class ImageInfo( Base ):
                 'imagingTools'             : self.imagingTools,
                 'format'                   : self.format,
                 'primaryStorageMediaId'    : self.primaryStorageMediaId,
-                'primaryStorageMeidaName'  : self.primaryStorageMediaName,
+                'primaryStorageMediaName'  : self.primaryStorageMediaName,
                 'backupStorageMediaId'     : self.backupStorageMediaId,
                 'backupStorageMediaName'   : self.backupStorageMediaName,
                 'postCollection'           : self.postCollection,
