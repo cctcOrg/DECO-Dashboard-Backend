@@ -184,7 +184,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dateReceived\": \"2017-7-7 04:20\",\n  \"caseNumber\": 100,\n  \"caseDescription\": \"This case needs more visualizations!\",\n  \"suspectName\": \"Suspect 1\",\n  \"examinerNames\": \"Examiner 1\",\n  \"collectionLocation\": \"San Luis Obispo, CA\",\n  \"labId\": 1000,\n  \"userId\": 1\n}"
+							"raw": "{\n  \"dateReceived\": \"2017-7-7 04:20\",\n  \"caseNumber\": 100,\n  \"caseDescription\": \"This case needs more visualizations!\",\n  \"suspectLastName\": \"Last Suspect\",\n  \"suspectFirstName\": \"First Suspect\",\n  \"examinerLastName\": \"Last Examiner\",\n  \"examinerFirstName\": \"First Examiner\",\n  \"collectionLocation\": \"San Luis Obispo, CA\",\n  \"labId\": 1000,\n  \"userId\": 1\n}"
 						},
 						"description": ""
 					},
@@ -207,8 +207,10 @@
 									"tests[\"time\"] = jsonData[0][\"dateReceived\"][1] === \"04:20:00\";",
 									"tests[\"caseNumber\"] = jsonData[0].caseNumber === 100;",
 									"tests[\"caseDescription\"] = jsonData[0].caseDescription  === \"This case needs more visualizations!\";",
-									"tests[\"suspectName\"] = jsonData[0].suspectName === \"Suspect 1\";",
-									"tests[\"examinerNames\"] = jsonData[0].examinerNames === \"Examiner 1\";",
+									"tests[\"suspectLastName\"] = jsonData[0].suspectLastName === \"Last Suspect\";",
+									"tests[\"suspectFirstName\"] = jsonData[0].suspectFirstName === \"First Suspect\";",
+									"tests[\"examinerLastName\"] = jsonData[0].examinerLastName === \"Last Examiner\";",
+									"tests[\"examinerFirstName\"] = jsonData[0].examinerFirstName === \"First Examiner\";",
 									"tests[\"collectionLocation\"] = jsonData[0].collectionLocation === \"San Luis Obispo, CA\";",
 									"tests[\"labId\"] = jsonData[0].labId === 1000;",
 									"tests[\"userId\"] = jsonData[0].userId == postman.getGlobalVariable(\"userId1\")",
@@ -253,8 +255,10 @@
 									"tests[\"time\"] = jsonData[\"dateReceived\"][1] === \"04:20:00\";",
 									"tests[\"caseNumber\"] = jsonData.caseNumber === 100;",
 									"tests[\"caseDescription\"] = jsonData.caseDescription  === \"This case needs more visualizations!\";",
-									"tests[\"suspectName\"] = jsonData.suspectName === \"Suspect 1\";",
-									"tests[\"examinerNames\"] = jsonData.examinerNames === \"Examiner 1\";",
+									"tests[\"suspectLastName\"] = jsonData.suspectLastName === \"Last Suspect\";",
+									"tests[\"suspectFirstName\"] = jsonData.suspectFirstName === \"First Suspect\";",
+									"tests[\"examinerLastName\"] = jsonData.examinerLastName === \"Last Examiner\";",
+									"tests[\"examinerFirstName\"] = jsonData.examinerFirstName === \"First Examiner\";",
 									"tests[\"collectionLocation\"] = jsonData.collectionLocation === \"San Luis Obispo, CA\";",
 									"tests[\"labId\"] = jsonData.labId === 1000;",
 									"tests[\"userId\"] = jsonData.userId == postman.getGlobalVariable(\"userId1\")",
@@ -764,6 +768,158 @@
 							"query": [
 								{
 									"key": "imgId",
+									"value": "1",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"storageId\" : 1,\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 123456789\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File",
+			"description": "",
+			"item": [
+				{
+					"name": "200 - New Relevant File 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev/{{userId1.caseId1.deviceDescId1}}/dm/{{userId1.caseId1.deviceDescId1.dmdId1}}/img/{{userId1.caseId1.deviceDescId1.dmdId1.imageId1}}/file",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"description": "",
+									"key": "file",
+									"type": "file",
+									"src": "puppy.jpg"
+								},
+								{
+									"description": "",
+									"key": "json",
+									"type": "text",
+									"value": "{\"contentDesc\":\"This is a content description\",\n\"suggestedReviewPlatform\":\"Some suggested review platform\",\n\"notes\":\"Some random ass notes in this random ass JSON\"\n}"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get All Files for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody)",
+									"jsonData = jsonData[\"files_list\"]",
+									"",
+									"tests[\"contentDesc\"] = jsonData[0].contentDesc === \"This is a content description\";",
+									"tests[\"suggestedReviewPlatform\"] = jsonData[0].suggestedReviewPlatform === \"Some suggested review platform\";",
+									"tests[\"format\"] = jsonData[0].format === \"Some random ass notes in this random ass JSON\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev/{{userId1.caseId1.deviceDescId1}}/dm/{{userId1.caseId1.deviceDescId1.dmdId1}}/img/{{userId1.caseId1.deviceDescId1.dmdId1.imageId1}}/file",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"storageId\" : 1,\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 123456789\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get Specific File 1 for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody)",
+									"",
+									"tests[\"contentDesc\"] = jsonData.contentDesc === \"This is a content description\";",
+									"tests[\"suggestedReviewPlatform\"] = jsonData.suggestedReviewPlatform === \"Some suggested review platform\";",
+									"tests[\"format\"] = jsonData.format === \"Some random ass notes in this random ass JSON\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev/{{userId1.caseId1.deviceDescId1}}/dm/{{userId1.caseId1.deviceDescId1.dmdId1}}/img/{{userId1.caseId1.deviceDescId1.dmdId1.imageId1}}/file?fileId=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"evd",
+								"{{userId1}}",
+								"case",
+								"{{userId1.caseId1}}",
+								"dev",
+								"{{userId1.caseId1.deviceDescId1}}",
+								"dm",
+								"{{userId1.caseId1.deviceDescId1.dmdId1}}",
+								"img",
+								"{{userId1.caseId1.deviceDescId1.dmdId1.imageId1}}",
+								"file"
+							],
+							"query": [
+								{
+									"key": "fileId",
 									"value": "1",
 									"equals": true,
 									"description": ""
