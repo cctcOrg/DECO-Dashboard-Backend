@@ -165,7 +165,7 @@ class Image(Resource):
             return image.serialize
         # Get all images for specified digital media/device/case for logged in user
         else:
-            images = db.session.query(ImageInfo).filter_by(deviceDescId = dmId, userId = userId).all()
+            images = db.session.query(ImageInfo).filter_by(digitalMediaDescId = dmId, userId = userId).all()
             return { "images_list": [image.serialize for image in images ] }
 
     def post(self, userId, caseId, deviceId, dmId):
