@@ -63,9 +63,13 @@ class Case(Resource):
    
     # Create a new case
     def post(self, userId):
+        post = "[POST CASE] "
+        
+        print(post + "Getting data from JSON...")
         # Get JSON data from frontend
         data = request.get_json()
 
+        print(post + "Creating row for DB insertion...")
         # Create new case object, populated with values from JSON data
         user = db.session.query(Users).filter_by(id = userId).one()
         case = CaseSummary(
@@ -78,6 +82,7 @@ class Case(Resource):
             labId = data['labId'],
             users = user )
 
+        print(post + "Inserting into DB...")
         # Stage case for commit to database
         db.session.add(case)
         # Commit case to database
