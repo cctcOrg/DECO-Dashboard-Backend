@@ -200,7 +200,7 @@ class File(Resource):
             return file.serialize
         # Get all files for specified image/digital media/device/case for logged in user
         else:
-            files = db.session.query(RelevantFiles).filter_by(digitalMediaDescId = dmId, userId = userId).all()
+            files = db.session.query(RelevantFiles).filter_by(imageInfoId = imgId, userId = userId).all()
             return { "files_list": [file.serialize for file in files ] }
     
     def post(self, userId, caseId, deviceId, dmId, imgId):
@@ -215,7 +215,7 @@ class File(Resource):
         imageInfo = db.session.query(ImageInfo).filter_by(id = imgId).one()
  
       # Get JSON containing some meta data of the file
-        data = request.form
+        data = request.json
         print ("request.form: ", request.form)
         print ("data dict: ", data)
         newFile = request.files['file']
