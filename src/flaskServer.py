@@ -160,12 +160,12 @@ class Media(Resource):
 class Image(Resource):
     def get(self, userId, caseId, deviceId, dmId):
         # Get specific image for specified digital media/device/case for logged in user
-        if request.args.get('imgId'):
-            image = db.session.query(ImageInfo).filter_by(id = request.args.get('imgId'), userId = userId).one()
+        if request.args.get('fileId'):
+            image = db.session.query(ImageInfo).filter_by(id = request.args.get('fileId'), userId = userId).one()
             return image.serialize
         # Get all images for specified digital media/device/case for logged in user
         else:
-            images = db.session.query(ImageInfo).filter_by(digitalMediaDescId = dmId, userId = userId).all()
+            images = db.session.query(ImageInfo).filter_by(imageInfoId = imgId, userId = userId).all()
             return { "images_list": [image.serialize for image in images ] }
 
     def post(self, userId, caseId, deviceId, dmId):
