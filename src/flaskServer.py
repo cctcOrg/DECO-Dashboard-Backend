@@ -81,7 +81,6 @@ class Case(Resource):
             examinerLastName = data['examinerLastName'],
             examinerFirstName = data['examinerFirstName'],
             collectionLocation = data['collectionLocation'],
-            examinerNames = data['examinerNames'],
             labId = data['labId'],
             users = user )
 

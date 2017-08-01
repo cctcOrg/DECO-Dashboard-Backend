@@ -81,17 +81,17 @@ class CaseSummary( Base ):
     @property
     def serialize( self ):
         return {
-                'id'                : self.id,
-                'dateReceived'      : dump_datetime(self.dateReceived),
-                'caseNumber'        : self.caseNumber,
-                'caseDescription'   : self.caseDescription,
-                'suspectLastName'   : self.suspectLastName, 
-                'suspectFirstName'  : self.suspectFirstName, 
-                'collectionLocation': self.collectionLocation,
-                'examinerLastName'  : self.examinerLastName,
-                'examinerFirstName' : self.examinerFirstName,
-                'labId'             : self.labId,
-                'userId'            : self.userId,
+                 'id'                : self.id,
+                 'dateReceived'      : dump_datetime(self.dateReceived),
+                 'caseNumber'        : self.caseNumber,
+                 'caseDescription'   : self.caseDescription,
+                 'suspectLastName'   : self.suspectLastName, 
+                 'suspectFirstName'  : self.suspectFirstName, 
+                 'collectionLocation': self.collectionLocation,
+                 'examinerLastName'  : self.examinerLastName,
+                 'examinerFirstName' : self.examinerFirstName,
+                 'labId'             : self.labId,
+                 'userId'            : self.userId,
                 }
 
 class DeviceDesc( Base ):
