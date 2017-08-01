@@ -200,7 +200,7 @@ class RelevantFiles( Base):
     notes = Column( String(), nullable =False)
     
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
-    imagingInfoId = Column( Integer, ForeignKey('image_info.id'), unique=False, nullable=False)
+    imageInfoId = Column( Integer, ForeignKey('image_info.id'), unique=False, nullable=False)
 
     @property
     def serialize( self ):
@@ -212,7 +212,7 @@ class RelevantFiles( Base):
                 'size'                    : self.size,
                 'suggestedReviewPlatform' : self.suggestedReviewPlatform,
                 'notes'                   : self.notes,
-                'imagingInfoId'           : self.imagingInfoId,
+                'imageInfoId'             : self.imageInfoId,
                 'userId'                  : self.userId
               }
 
