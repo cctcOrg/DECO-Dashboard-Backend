@@ -221,6 +221,6 @@ class RelevantFiles( Base):
               }
 
         
-engine = create_engine( 'postgresql://cctc_user:cctc@localhost/newdb')
+engine = create_engine('postgresql://cctc_user:cctc@localhost/dashboarddb')
 #engine = create_engine( 'postgresql://postgres@localhost/dashboarddb')
-Base.metadata.create_all( engine)
+Base.metadata.create_all(engine)
