@@ -57,7 +57,7 @@ class Case(Resource):
             return case.serialize
         # Get all cases for logged in user
         else:
-            case = db.session.query(CaseSummary).filter_by(userId = userId).all()
+            cases = db.session.query(CaseSummary).filter_by(userId = userId).all()
             return { "case_summary_list": [case.serialize for case in cases] }
    
     # Create a new case
@@ -85,18 +85,29 @@ class Case(Resource):
 
 class Device( Resource):
     def get(self, userId, caseId):
-            get = "[GET DEV] "
-
+        get = "[GET DEV] "
+        
+        # Get a specific device for the specified case for logged in user
+        if request.args.get('deviceId'):
+            device = db.session.query(DeviceDesc).filter_by(id = request.args.get('deviceId'), userId = userId).one()
+            return device.serialize
+        # Get all devices for specified case for logged in user
+        else:
             print(get + "Getting all devices belonging to case, caseId...")
-            info = db.session.query(DeviceDesc).filter_by(caseSummaryId = caseId).all()
-            
+            devices = db.session.query(DeviceDesc).filter_by(caseSummaryId = caseId, userId = userId).all()
+        
             print(get + "Returning JSON...")
-            return { "json_list": [i.serialize for i in info] }
+            return { "device_list": [device.serialize for device in devices] }
 
-    def post( self, userId, caseId ):
+    def post(self, userId, caseId):
+        post = "[POST DEV]"
+
+        print(post + "Getting JSON...")
         data = request.get_json()
-        users = db.session.query(Users).filter_by( id = userId).one()
-        case_summary = db.session.query(CaseSummary).filter_by(id = caseId ).one()
+
+        print(post + "Creating entry for database...")
+        users = db.session.query(Users).filter_by(id = userId).one()
+        case_summary = db.session.query(CaseSummary).filter_by(id = caseId).one()
         deviceDesc=DeviceDesc( 
                 deviceDescription = data['deviceDescription'],
                 make = data['make'],
@@ -111,18 +122,28 @@ class Device( Resource):
                 users = users,
                 case_summary = case_summary
                 )
+        
+        print(post + "Adding to database...")
         db.session.add( deviceDesc )
         db.session.commit()
         return 200
 
-# TODO: Refactor so that it handles new endpoint
-# TODO: Add query parameters to new endpoints
 class Media(Resource):
-    def post(self, userId, caseId, devId):
+    def get(self, userId, caseId, deviceId):
+        # Get specific digital media for specified device/case for logged in user
+        if request.args.get('dmId'):
+            device = db.session.query(DigitalMediaDesc).filter_by(id = request.args.get('dmId'), userId = userId).one()
+            return device.serialize
+        # Get all digital media for specified device/case for logged in user
+        else:
+            medias = db.session.query(DigitalMediaDesc).filter_by(deviceDescId = deviceId, userId = userId).all()
+            return { "digital_media_list": [media.serialize for media in medias] }
+
+    def post(self, userId, caseId, deviceId):
         data = request.get_json()
 
-        users = db.session.query( Users).filter_by( id = userId).one()
-        deviceDesc = db.session.query( DeviceDesc ).filter_by( id = devId).one()
+        users = db.session.query(Users).filter_by(id = userId).one()
+        deviceDesc = db.session.query(DeviceDesc).filter_by(id = deviceId).one()
         media = DigitalMediaDesc (
                 storageId = data['storageId'],
                 make = data['make'],
@@ -131,14 +152,11 @@ class Media(Resource):
                 capacity = data['capacity'],
                 users = users,
                 device_desc = deviceDesc )
+       
         db.session.add( media )
         db.session.commit()
         return 200
  
-    def get(self, userId, caseId, devId):
-        media = db.session.query( DigitalMediaDesc ).filter_by(deviceDescId = devId).all()
-        return { "digital media list": [i.serialize for i in media] }
-
 class Image( Resource):
     def get(self, userId):
         info = db.session.query(ImageInfo).filter_by(digitalMediaDescId=request.args.get('mediaId')).all()
@@ -207,7 +225,6 @@ class SaveFileFS(Resource):
                 image_info = image_info
                 )
 
-
       # Add and stage for commit to database
         db.session.add( fileToDB )
         db.session.commit()
@@ -246,12 +263,12 @@ class Nuke(Resource):
 
         return "NUKED"
     
-api.add_resource( UserInfo, '/evd/user')
-api.add_resource( Case, '/evd/<int:userId>/case')
-api.add_resource( Device, '/evd/<int:userId>/case/<int:caseId>/dev')
-api.add_resource( Media, '/evd/<int:userId>/case/<int:caseId>/dev/<int:devId>/dm')
-api.add_resource( Image, '/evd/<int:userId>/img')
-api.add_resource( SaveFileFS, '/evd/<int:userId>/file')
+api.add_resource( UserInfo,   '/evd/user')
+api.add_resource( Case,       '/evd/<int:userId>/case')
+api.add_resource( Device,     '/evd/<int:userId>/case/<int:caseId>/dev')
+api.add_resource( Media,      '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm')
+api.add_resource( Image,      '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img')
+api.add_resource( SaveFileFS, '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/file')
 
 # Endpoint to remove all entries from all tables in the DB
 api.add_resource( Nuke, '/evd/nuke')
