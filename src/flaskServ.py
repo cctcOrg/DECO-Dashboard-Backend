@@ -158,7 +158,7 @@ class Media(Resource):
         return 200
  
 class Image(Resource):
-    def get(self, userId):
+    def get(self, userId, caseId, deviceId, dmId):
         # Get specific image for specified digital media/device/case for logged in user
         if request.args.get('imgId'):
             device = db.session.query(DigitalMediaDesc).filter_by(id = request.args.get('dmId'), userId = userId).one()
@@ -168,7 +168,7 @@ class Image(Resource):
             images = db.session.query(ImageInfo).filter_by(digitalMediaDescId = request.args.get('dmId')).all()
             return { "images_list": [image.serialize for image in images ] }
 
-    def post(self, userId):
+    def post(self, userId, caseId, deviceId, dmId):
         data = request.get_json()
         
         users = db.session.query(Users).filter_by(id = userId).one()
