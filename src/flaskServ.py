@@ -191,20 +191,24 @@ class Image(Resource):
 
 
 class SaveFileFS(Resource):   
-    def post(self, userId):
-        # Get file name
+    def post(self, userId, caseId, deviceId, dmId, imgId):
+        post = "[POST FILE] "
+
+        # Check if POST request has file part
         if 'file' not in request.files:
-            print ('No file in request')
+            print (post + 'No file in request')
             return 400
-        users = db.session.query(Users).filter_by( id = userId).one()
-        image_info = db.session.query(ImageInfo).filter_by(id = request.args.get('imageId')).one()
+
+        users = db.session.query(Users).filter_by(id = userId).one()
+        imageInfo = db.session.query(ImageInfo).filter_by(id = request.args.get('imgId')).one()
  
       # Get JSON containing some meta data of the file
         data = request.form
-        print ("request.form: ", request.form )
+        print ("request.form: ", request.form)
         print ("data dict: ", data)
         newFile = request.files['file']
         print(newFile.filename)
+        
         if newFile:
         # Get file name securely
             fileName = secure_filename(newFile.filename)
@@ -227,10 +231,10 @@ class SaveFileFS(Resource):
                 suggestedReviewPlatform = data["suggestedReviewPlatform"],
                 notes = data["notes"],
                 users = users,
-                image_info = image_info )
+                image_info = imageInfo )
 
       # Add and stage for commit to database
-        db.session.add( fileToDB )
+        db.session.add(fileToDB)
         db.session.commit()
 
         return 200
