@@ -51,16 +51,14 @@ class UserInfo(Resource):
 class Case(Resource):
    # Return case summary
     def get(self, userId):
-        # Get JSON data from frontend containing userId
-
         # Get a specific case for logged in user
-        if (request.args.get('caseId')):
-            case = db.session.query(CaseSummary).filter_by(id = request.args.get('caseId'), userId=userId).one()
+        if request.args.get('caseId'):
+            case = db.session.query(CaseSummary).filter_by(id = request.args.get('caseId'), userId = userId).one()
             return case.serialize
         # Get all cases for logged in user
         else:
-            case = db.session.query(CaseSummary).filter_by(userId=userId).all()
-            return { "json_list": [i.serialize for i in case] }
+            case = db.session.query(CaseSummary).filter_by(userId = userId).all()
+            return { "case_summary_list": [case.serialize for case in cases] }
    
     # Create a new case
     def post(self, userId):
@@ -218,46 +216,36 @@ class SaveFileFS(Resource):
 
 # Clear all contents in database
 class Nuke(Resource):
+    # Remove all entries for some database table
+    def clearTable(tableName, tablePK, debugString):
+        if debugString:
+            print(debugString)
+
+        db.session.query(tableName).delete()
+        db.session.commit()
+
+        # Reset the auto increment for the primary key
+        db.engine.execute("ALTER SEQUENCE " + tablePK + " RESTART WITH 1;")
+
     def delete(self):
         nuke = "[NUKE] "
 
         # Remove all entries/rows/tuples starting from RelevantFiles and working backwards
-        print (nuke + "Clearing relevant files table...")
-        db.session.query(RelevantFiles).delete()
-        db.session.commit()
-        db.engine.execute("ALTER SEQUENCE relevant_files_id_seq RESTART WITH 1;")
-
-        print (nuke + "Clearing image info table...")
-        db.session.query(ImageInfo).delete()
-        db.session.commit()
-        db.engine.execute("ALTER SEQUENCE image_info_id_seq RESTART WITH 1;")
-
-        print (nuke + "Clearing digital media description table...")
-        db.session.query(DigitalMediaDesc).delete()
-        db.session.commit()
-        db.engine.execute("ALTER SEQUENCE digital_media_desc_id_seq RESTART WITH 1;")
-        
-        print (nuke + "Clearing device table...")
-        db.session.query(DeviceDesc).delete()
-        db.session.commit()
-        db.engine.execute("ALTER SEQUENCE device_desc_id_seq RESTART WITH 1;")
-
-        print (nuke + "Clearing case summary table...")
-        db.session.query(CaseSummary).delete()
-        db.session.commit()
-        db.engine.execute("ALTER SEQUENCE case_summary_id_seq RESTART WITH 1;")
-
-        print (nuke + "Clearing users table...")
-        clearTable(Users)
-        db.engine.execute("ALTER SEQUENCE users_id_seq RESTART WITH 1;")
+        Nuke.clearTable(RelevantFiles, "relevant_files_id_seq",
+            nuke + "Clearing relevant files table...")
+        Nuke.clearTable(ImageInfo, "image_info_id_seq", 
+            nuke + "Clearing image info table...")
+        Nuke.clearTable(DigitalMediaDesc, "digital_media_desc_id_seq", 
+            nuke + "Clearing digital media description table...")
+        Nuke.clearTable(DeviceDesc, "device_desc_id_seq", 
+            nuke + "Clearing device table...")
+        Nuke.clearTable(CaseSummary, "case_summary_id_seq", 
+            nuke + "Clearing case summary table...")
+        Nuke.clearTable(Users, "users_id_seq", 
+            nuke + "Clearing users table...")
 
         return "NUKED"
     
-    # Remove all entries for some database table
-    def clearTable(tableName):
-        db.session.query(tableName).delete()
-        db.session.commit()
-
 api.add_resource( UserInfo, '/evd/user')
 api.add_resource( Case, '/evd/<int:userId>/case')
 api.add_resource( Device, '/evd/<int:userId>/case/<int:caseId>/dev')
