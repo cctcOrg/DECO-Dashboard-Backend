@@ -228,10 +228,10 @@ class File(Resource):
             # Get a new path
             newPath = os.path.join(app.config['UPLOAD_FOLDER'] + "/", fileName)
            
-            tempFile = Path(newPath)
             # Check if file exist in directory
+            tempFile = Path(newPath)
             if tempFile.is_file():
-               return "File with this name already exists!"
+               return abort(400), "File with this name already exists!"
 
             # Save file to new path
             newFile.save(newPath)
