@@ -21,11 +21,16 @@ UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 class UserInfo(Resource):
-  # create a new user 
+    def get(self):
+        # Query User table by email 
+        user = db.session.query(Users).filter_by(email = request.args.get('email')).first()
+        return user.serialize
+
+    # Create a new user 
     def post(self):
         post = "[POST USER] "
+        
         print(post + "Getting data from JSON...")
-
         data = request.get_json()
 
         print(post + "Creating row for DB insertion...")
@@ -35,18 +40,12 @@ class UserInfo(Resource):
             firstName = data['firstName'] )
 
         print(post + "Inserting into DB...")
-        #stage and commit to database
-        db.session.add( users)
+        # Stage and commit to database
+        db.session.add(users)
         db.session.commit()
 
         print(post + "RETURNING 200")
         return 200
-
-    def get(self):
-        #query User table by email 
-        info = db.session.query(Users).filter_by(email = request.args.get('email')).first()
-        return jsonify( id=info.id, email=info.email, firstName=info.firstName, lastName=info.lastName)
-
 
 class Case(Resource):
    # Return case summary
@@ -66,7 +65,7 @@ class Case(Resource):
         data = request.get_json()
 
         # Create new case object, populated with values from JSON data
-        user = db.session.query(Users).filter_by( id = userId ).one()
+        user = db.session.query(Users).filter_by(id = userId).one()
         case = CaseSummary(
             dateReceived = data['dateReceived'],
             caseNumber = data['caseNumber'],
@@ -78,7 +77,7 @@ class Case(Resource):
             users = user )
 
         # Stage case for commit to database
-        db.session.add( case )
+        db.session.add(case)
         # Commit case to database
         db.session.commit()
         return 200
@@ -120,8 +119,7 @@ class Device(Resource):
                 typeOfCollection = data['typeOfCollection'],
                 mediaStatus = data['mediaStatus'],
                 users = users,
-                case_summary = case_summary
-                )
+                case_summary = case_summary )
         
         print(post + "Adding to database...")
         db.session.add( deviceDesc )
@@ -144,7 +142,7 @@ class Media(Resource):
 
         users = db.session.query(Users).filter_by(id = userId).one()
         deviceDesc = db.session.query(DeviceDesc).filter_by(id = deviceId).one()
-        media = DigitalMediaDesc (
+        media = DigitalMediaDesc(
                 storageId = data['storageId'],
                 make = data['make'],
                 model = data['model'],
@@ -153,7 +151,7 @@ class Media(Resource):
                 users = users,
                 device_desc = deviceDesc )
        
-        db.session.add( media )
+        db.session.add(media)
         db.session.commit()
         return 200
  
@@ -187,7 +185,7 @@ class Image(Resource):
                 users = users,
                 digital_media_desc = digital_media_desc )
         
-        db.session.add( imageInfo )
+        db.session.add(imageInfo)
         db.session.commit()
         return 200
 
@@ -199,14 +197,14 @@ class SaveFileFS(Resource):
             print ('No file in request')
             return 400
         users = db.session.query(Users).filter_by( id = userId).one()
-        image_info = db.session.query(ImageInfo).filter_by( id = request.args.get('imageId')).one()
+        image_info = db.session.query(ImageInfo).filter_by(id = request.args.get('imageId')).one()
  
       # Get JSON containing some meta data of the file
         data = request.form
-        print ( "request.form: ", request.form )
+        print ("request.form: ", request.form )
         print ("data dict: ", data)
         newFile = request.files['file']
-        print( newFile.filename )
+        print(newFile.filename)
         if newFile:
         # Get file name securely
             fileName = secure_filename(newFile.filename)
@@ -229,8 +227,7 @@ class SaveFileFS(Resource):
                 suggestedReviewPlatform = data["suggestedReviewPlatform"],
                 notes = data["notes"],
                 users = users,
-                image_info = image_info
-                )
+                image_info = image_info )
 
       # Add and stage for commit to database
         db.session.add( fileToDB )
@@ -269,17 +266,18 @@ class Nuke(Resource):
             nuke + "Clearing users table...")
 
         return "NUKED"
-    
-api.add_resource( UserInfo,   '/evd/user')
-api.add_resource( Case,       '/evd/<int:userId>/case')
-api.add_resource( Device,     '/evd/<int:userId>/case/<int:caseId>/dev')
-api.add_resource( Media,      '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm')
-api.add_resource( Image,      '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img')
-api.add_resource( SaveFileFS, '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/file')
+
+# Dashboard endpoints
+api.add_resource(UserInfo,   '/evd/user')
+api.add_resource(Case,       '/evd/<int:userId>/case')
+api.add_resource(Device,     '/evd/<int:userId>/case/<int:caseId>/dev')
+api.add_resource(Media,      '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm')
+api.add_resource(Image,      '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img')
+api.add_resource(SaveFileFS, '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/file')
 
 # Endpoint to remove all entries from all tables in the DB
-api.add_resource( Nuke, '/evd/nuke')
+api.add_resource(Nuke, '/evd/nuke')
 
 if __name__ == "__main__":
-    #app.run( host = app.run( host = '129.65.247.21', port = 5000), debug=True )
-    app.run( host = app.run( host = '129.65.100.50', port = 5000, use_debugger=True, threaded=True), debug=True )
+    #app.run(host = app.run(host = '129.65.247.21', port = 5000), debug=True)
+    app.run(host = app.run(host = '129.65.100.50', port = 5000, use_debugger=True, threaded=True), debug=True)
