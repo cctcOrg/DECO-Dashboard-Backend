@@ -68,9 +68,11 @@ class CaseSummary( Base ):
     dateReceived = Column( DateTime, nullable = False )
     caseNumber = Column( Integer, nullable = False )
     caseDescription = Column( String(), nullable = False)
-    suspectName = Column( String(), nullable = False)
+    suspectLastName = Column( String(), nullable = False)
+    suspectFirstName = Column( String(), nullable = False)
     collectionLocation = Column( String(), nullable = False)
-    examinerNames = Column( String(), nullable = False)
+    examinerLastName = Column( String(), nullable = False)
+    examinerFirstName = Column( String(), nullable = False)
     labId = Column( Integer, unique = True, nullable = False)
 
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
@@ -83,9 +85,11 @@ class CaseSummary( Base ):
                 'dateReceived'      : dump_datetime(self.dateReceived),
                 'caseNumber'        : self.caseNumber,
                 'caseDescription'   : self.caseDescription,
-                'suspectName'       : self.suspectName, 
+                'suspectLastName'   : self.suspectLastName, 
+                'suspectFirstName'  : self.suspectFirstName, 
                 'collectionLocation': self.collectionLocation,
-                'examinerNames'     : self.examinerNames,
+                'examinerLastName'  : self.examinerLastName,
+                'examinerFirstName' : self.examinerFirstName,
                 'labId'             : self.labId,
                 'userId'            : self.userId,
                 }
