@@ -30,3 +30,6 @@ Post request that creates 'User' entry:
 "lastName": "Jones", 
 "firstName": "Alex"}' 
 http://localhost:5000/evd/user`
+
+# AWS Docker Nginx tutorial
+https://ianlondon.github.io/blog/deploy-flask-docker-nginx/

@@ -1,2 +1,8 @@
 #install with following command: pip install -r requirements.txt
 Flask==0.12.2
+SQLAlchemy==1.1.12
+psycopg2==2.7.3
+Flask-RESTful==0.3.6
+Flask-SQLAlchemy==2.2
+Flask-Cors==3.0.3
+pathlib==1.0.1
