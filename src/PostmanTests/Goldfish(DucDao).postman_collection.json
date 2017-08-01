@@ -1,0 +1,793 @@
+{
+	"variables": [],
+	"info": {
+		"name": "CCTC Pizza Goldfish (Duc Dao)",
+		"_postman_id": "a6cc317f-2ea2-1fa4-37c3-b88d7cb94ab6",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"description": "",
+			"item": [
+				{
+					"name": "200 - Clear DB",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/nuke",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "500 - Get Specific User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 500;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/evd/user?email=ducdao11@gmail.com",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"evd",
+								"user"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "ducdao11@gmail.com",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "get user"
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/user",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"ducdao11@gmail.com\", \n\t\"firstName\": \"Duc\", \n\t\"lastName\": \"Dao\" \n}"
+						},
+						"description": "get user"
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get Specific User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"email\"] = jsonData.email === \"ducdao11@gmail.com\";",
+									"tests[\"lastName\"] = jsonData.lastName === \"Dao\";",
+									"tests[\"firstName\"] = jsonData.firstName === \"Duc\";",
+									"",
+									"// Create userId variable so that other tests get the userId dynamically",
+									"postman.setGlobalVariable(\"userId1\", jsonData[\"id\"]);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/evd/user?email=ducdao11@gmail.com",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"evd",
+								"user"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "ducdao11@gmail.com",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "get user"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Case Summary",
+			"description": "",
+			"item": [
+				{
+					"name": "200 - New Case Summary 1 for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dateReceived\": \"2017-7-7 04:20\",\n  \"caseNumber\": 100,\n  \"caseDescription\": \"This case needs more visualizations!\",\n  \"suspectName\": \"Suspect 1\",\n  \"examinerNames\": \"Examiner 1\",\n  \"collectionLocation\": \"San Luis Obispo, CA\",\n  \"labId\": 1000,\n  \"userId\": 1\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get All Case Summaries for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"jsonData = jsonData[\"case_summary_list\"]",
+									"",
+									"tests[\"date\"] = jsonData[0][\"dateReceived\"][0] === \"2017-07-07\";",
+									"tests[\"time\"] = jsonData[0][\"dateReceived\"][1] === \"04:20:00\";",
+									"tests[\"caseNumber\"] = jsonData[0].caseNumber === 100;",
+									"tests[\"caseDescription\"] = jsonData[0].caseDescription  === \"This case needs more visualizations!\";",
+									"tests[\"suspectName\"] = jsonData[0].suspectName === \"Suspect 1\";",
+									"tests[\"examinerNames\"] = jsonData[0].examinerNames === \"Examiner 1\";",
+									"tests[\"collectionLocation\"] = jsonData[0].collectionLocation === \"San Luis Obispo, CA\";",
+									"tests[\"labId\"] = jsonData[0].labId === 1000;",
+									"tests[\"userId\"] = jsonData[0].userId == postman.getGlobalVariable(\"userId1\")",
+									"",
+									"// Create caseId variable so that other tests get the caseId dynamically",
+									"postman.setGlobalVariable(\"userId1.caseId1\", jsonData[0].id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"dateReceived\": \"7-7-2017\",\n  \"caseNumber\": 100,\n  \"deviceDesc\": \"This is some description for some device\",\n  \"suspectName\": \"Fake Suspect\",\n  \"collectionLocation\": \"San Luis Obispo, CA\",\n  \"labId\": 1000\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get Specific Case Summary 1 for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"date\"] = jsonData[\"dateReceived\"][0] === \"2017-07-07\";",
+									"tests[\"time\"] = jsonData[\"dateReceived\"][1] === \"04:20:00\";",
+									"tests[\"caseNumber\"] = jsonData.caseNumber === 100;",
+									"tests[\"caseDescription\"] = jsonData.caseDescription  === \"This case needs more visualizations!\";",
+									"tests[\"suspectName\"] = jsonData.suspectName === \"Suspect 1\";",
+									"tests[\"examinerNames\"] = jsonData.examinerNames === \"Examiner 1\";",
+									"tests[\"collectionLocation\"] = jsonData.collectionLocation === \"San Luis Obispo, CA\";",
+									"tests[\"labId\"] = jsonData.labId === 1000;",
+									"tests[\"userId\"] = jsonData.userId == postman.getGlobalVariable(\"userId1\")",
+									"",
+									"// Create caseId variable so that other tests get the caseId dynamically",
+									"postman.setGlobalVariable(\"userId1.caseId1\", jsonData.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/evd/{{userId1}}/case?caseId=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"evd",
+								"{{userId1}}",
+								"case"
+							],
+							"query": [
+								{
+									"key": "caseId",
+									"value": "1",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"dateReceived\": \"7-7-2017\",\n  \"caseNumber\": 100,\n  \"deviceDesc\": \"This is some description for some device\",\n  \"suspectName\": \"Fake Suspect\",\n  \"collectionLocation\": \"San Luis Obispo, CA\",\n  \"labId\": 1000\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Device",
+			"description": "",
+			"item": [
+				{
+					"name": "200 - New Device 1 for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var parsed = JSON.stringify(postman.getGlobalVariable(\"userId1.caseId1\"))"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"deviceDescription\": \"This is some description for the Dell Chromebook 13\",\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 123456789,\n  \"deviceStatus\": \"Unknown\",\n  \"shutDownMethod\": \"Hard\",\n  \"systemDateTime\": \"2017-1-1 12:34\",\n  \"localDateTime\": \"2017-1-1 12:34\",\n  \"typeOfCollection\": \"Computer\",\n  \"mediaStatus\": \"Removed from system\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get All Devices for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody)",
+									"jsonData = jsonData[\"device_list\"][0]",
+									"",
+									"tests[\"deviceDescription\"] = jsonData.deviceDescription === \"This is some description for the Dell Chromebook 13\"",
+									"tests[\"make\"] = jsonData.make === \"Dell\"",
+									"tests[\"model\"] = jsonData.model === \"Chromebook 13\"",
+									"tests[\"serialNumber\"] = jsonData.serialNumber === 123456789",
+									"tests[\"shutDownMethod\"] = jsonData.shutDownMethod === \"Hard\"",
+									"tests[\"systemDate\"] = jsonData.systemDateTime[0] == \"2017-01-01\"",
+									"tests[\"systemTime\"] = jsonData.systemDateTime[1] == \"12:34:00\"",
+									"",
+									"tests[\"localDate\"] = jsonData.localDateTime[0] == \"2017-01-01\"",
+									"tests[\"localTime\"] = jsonData.localDateTime[1] == \"12:34:00\"",
+									"",
+									"tests[\"typeOfCollection\"] = jsonData.typeOfCollection == \"Computer\"",
+									"tests[\"mediaStatus\"] = jsonData.mediaStatus == \"Removed from system\"",
+									"",
+									"// Create deviceId variable so that other tests get the deviceId dynamically",
+									"postman.setGlobalVariable(\"userId1.caseId1.deviceDescId1\", jsonData.id)",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"storageId\" : 1,\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 123456789\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get Specific Device 1 for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody)",
+									"",
+									"tests[\"deviceDescription\"] = jsonData.deviceDescription === \"This is some description for the Dell Chromebook 13\"",
+									"tests[\"make\"] = jsonData.make === \"Dell\"",
+									"tests[\"model\"] = jsonData.model === \"Chromebook 13\"",
+									"tests[\"serialNumber\"] = jsonData.serialNumber === 123456789",
+									"tests[\"shutDownMethod\"] = jsonData.shutDownMethod === \"Hard\"",
+									"tests[\"systemDate\"] = jsonData.systemDateTime[0] == \"2017-01-01\"",
+									"tests[\"systemTime\"] = jsonData.systemDateTime[1] == \"12:34:00\"",
+									"",
+									"tests[\"localDate\"] = jsonData.localDateTime[0] == \"2017-01-01\"",
+									"tests[\"localTime\"] = jsonData.localDateTime[1] == \"12:34:00\"",
+									"",
+									"tests[\"typeOfCollection\"] = jsonData.typeOfCollection == \"Computer\"",
+									"tests[\"mediaStatus\"] = jsonData.mediaStatus == \"Removed from system\"",
+									"",
+									"// Create deviceId variable so that other tests get the deviceId dynamically",
+									"postman.setGlobalVariable(\"userId1.caseId1.deviceDescId1\", jsonData.id)",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev?deviceId=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"evd",
+								"{{userId1}}",
+								"case",
+								"{{userId1.caseId1}}",
+								"dev"
+							],
+							"query": [
+								{
+									"key": "deviceId",
+									"value": "1",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"storageId\" : 1,\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 123456789\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Digital Media",
+			"description": "",
+			"item": [
+				{
+					"name": "200 - New Digital Media 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev/{{userId1.caseId1.deviceDescId1}}/dm",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"storageId\" : 1,\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 50,\n  \"capacity\": 16000\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get All Digital Medias for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody)",
+									"jsonData = jsonData[\"digital_media_list\"]",
+									"",
+									"tests[\"id\"] = jsonData[0].id === 1",
+									"tests[\"deviceDescId\"] = jsonData[0].deviceDescId == postman.getGlobalVariable(\"userId1.caseId1.deviceDescId1\")",
+									"tests[\"make\"] = jsonData[0].make === \"Dell\"",
+									"tests[\"model\"] = jsonData[0].model === \"Chromebook 13\"",
+									"tests[\"serialNumber\"] = jsonData[0].serialNumber === 50",
+									"tests[\"capacity\"] = jsonData[0].capacity === 16000",
+									"",
+									"// Create deviceId variable so that other tests get the deviceId dynamically",
+									"postman.setGlobalVariable(\"userId1.caseId1.deviceDescId1.dmdId1\", jsonData[0].id)",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev/{{userId1.caseId1.deviceDescId1}}/dm",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"storageId\" : 1,\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 123456789\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get Specific Digital Media 1 for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody)",
+									"",
+									"tests[\"id\"] = jsonData.id === 1",
+									"tests[\"deviceDescId\"] = jsonData.deviceDescId == postman.getGlobalVariable(\"userId1.caseId1.deviceDescId1\")",
+									"tests[\"make\"] = jsonData.make === \"Dell\"",
+									"tests[\"model\"] = jsonData.model === \"Chromebook 13\"",
+									"tests[\"serialNumber\"] = jsonData.serialNumber === 50",
+									"tests[\"capacity\"] = jsonData.capacity === 16000",
+									"",
+									"// Create deviceId variable so that other tests get the deviceId dynamically",
+									"postman.setGlobalVariable(\"userId1.caseId1.deviceDescId1.dmdId1\", jsonData.id)",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev/{{userId1.caseId1.deviceDescId1}}/dm?dmId=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"evd",
+								"{{userId1}}",
+								"case",
+								"{{userId1.caseId1}}",
+								"dev",
+								"{{userId1.caseId1.deviceDescId1}}",
+								"dm"
+							],
+							"query": [
+								{
+									"key": "dmId",
+									"value": "1",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"storageId\" : 1,\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 123456789\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Image",
+			"description": "",
+			"item": [
+				{
+					"name": "200 - New Image 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev/{{userId1.caseId1.deviceDescId1}}/dm/{{userId1.caseId1.deviceDescId1.dmdId1}}/img",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"writeBlockMethod\": \"HARD\",\n  \"imagingTools\": \"Jim's God Tier Imager\",\n  \"format\": \"FAT32\",\n  \"primaryStorageMediaId\": 200,\n  \"primaryStorageMediaName\": \"Some primary storage media name\",\n  \"backupStorageMediaId\": 2000,\n  \"backupStorageMediaName\": \"Some backup storage media name\",\n  \"postCollection\": \"Image verified\",\n  \"size\": 8000,\n  \"notes\": \"Here are some notes for this image\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get All Images for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody)",
+									"jsonData = jsonData[\"images_list\"]",
+									"",
+									"tests[\"writeBlockMethod\"] = jsonData[0].writeBlockMethod === \"HARD\";",
+									"tests[\"imagingTools\"] = jsonData[0].imagingTools === \"Jim's God Tier Imager\";",
+									"tests[\"format\"] = jsonData[0].format === \"FAT32\";",
+									"",
+									"tests[\"primaryStorageMediaId\"] = jsonData[0].primaryStorageMediaId === 200",
+									"tests[\"primaryStorageMediaName\"] = jsonData[0].primaryStorageMediaName === \"Some primary storage media name\"",
+									"",
+									"tests[\"backupStorageMediaId\"] = jsonData[0].backupStorageMediaId === 2000",
+									"tests[\"backupStorageMediaName\"] = jsonData[0].backupStorageMediaName === \"Some backup storage media name\"",
+									"",
+									"tests[\"postCollection\"] = jsonData[0].postCollection == \"Image verified\"",
+									"tests[\"size\"] = jsonData[0].size == 8000",
+									"tests[\"notes\"] = jsonData[0].notes == \"Here are some notes for this image\"",
+									"tests[\"digitalMediaDescId\"] = jsonData[0].digitalMediaDescId == postman.getGlobalVariable(\"userId1.caseId1.deviceDescId1.dmdId1\")",
+									"",
+									"",
+									"// Create deviceId variable so that other tests get the deviceId dynamically",
+									"postman.setGlobalVariable(\"userId1.caseId1.deviceDescId1.dmdId1.imageId1\", jsonData[0].id);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev/{{userId1.caseId1.deviceDescId1}}/dm/{{userId1.caseId1.deviceDescId1.dmdId1}}/img",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"storageId\" : 1,\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 123456789\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "200 - Get Specific Image 1 for User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody)",
+									"",
+									"tests[\"writeBlockMethod\"] = jsonData.writeBlockMethod === \"HARD\";",
+									"tests[\"imagingTools\"] = jsonData.imagingTools === \"Jim's God Tier Imager\";",
+									"tests[\"format\"] = jsonData.format === \"FAT32\";",
+									"tests[\"primaryStorageMediaId\"] = jsonData.primaryStorageMediaId === 200",
+									"tests[\"primaryStorageMediaName\"] = jsonData.primaryStorageMediaName === \"Some primary storage media name\"",
+									"tests[\"backupStorageMediaId\"] = jsonData.backupStorageMediaId === 2000",
+									"tests[\"backupStorageMediaName\"] = jsonData.backupStorageMediaName === \"Some backup storage media name\"",
+									"tests[\"postCollection\"] = jsonData.postCollection == \"Image verified\"",
+									"tests[\"size\"] = jsonData.size == 8000",
+									"tests[\"notes\"] = jsonData.notes == \"Here are some notes for this image\"",
+									"tests[\"digitalMediaDescId\"] = jsonData.digitalMediaDescId == postman.getGlobalVariable(\"userId1.caseId1.deviceDescId1.dmdId1\")",
+									"",
+									"",
+									"// Create deviceId variable so that other tests get the deviceId dynamically",
+									"postman.setGlobalVariable(\"userId1.caseId1.deviceDescId1.dmdId1.imageId1\", jsonData.id);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/evd/{{userId1}}/case/{{userId1.caseId1}}/dev/{{userId1.caseId1.deviceDescId1}}/dm/{{userId1.caseId1.deviceDescId1.dmdId1}}/img?imgId=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"evd",
+								"{{userId1}}",
+								"case",
+								"{{userId1.caseId1}}",
+								"dev",
+								"{{userId1.caseId1.deviceDescId1}}",
+								"dm",
+								"{{userId1.caseId1.deviceDescId1.dmdId1}}",
+								"img"
+							],
+							"query": [
+								{
+									"key": "imgId",
+									"value": "1",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"storageId\" : 1,\n  \"make\": \"Dell\",\n  \"model\": \"Chromebook 13\",\n  \"serialNumber\": 123456789\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
