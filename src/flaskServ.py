@@ -83,7 +83,7 @@ class Case(Resource):
         db.session.commit()
         return 200
 
-class Device( Resource):
+class Device(Resource):
     def get(self, userId, caseId):
         get = "[GET DEV] "
         
@@ -157,15 +157,22 @@ class Media(Resource):
         db.session.commit()
         return 200
  
-class Image( Resource):
+class Image(Resource):
     def get(self, userId):
-        info = db.session.query(ImageInfo).filter_by(digitalMediaDescId=request.args.get('mediaId')).all()
-        return { "json_list": [i.serialize for i in info ] }
+        # Get specific image for specified digital media/device/case for logged in user
+        if request.args.get('imgId'):
+            device = db.session.query(DigitalMediaDesc).filter_by(id = request.args.get('dmId'), userId = userId).one()
+            return device.serialize
+        # Get all images for specified digital media/device/case for logged in user
+        else:
+            images = db.session.query(ImageInfo).filter_by(digitalMediaDescId = request.args.get('dmId')).all()
+            return { "images_list": [image.serialize for image in images ] }
 
-    def post( self, userId ):
+    def post(self, userId):
         data = request.get_json()
-        users = db.session.query(Users).filter_by( id = userId).one()
-        digital_media_desc = db.session.query(DigitalMediaDesc).filter_by( id = request.args.get('mediaId')).one()
+        
+        users = db.session.query(Users).filter_by(id = userId).one()
+        digital_media_desc = db.session.query(DigitalMediaDesc).filter_by(id = dmId).one()
         imageInfo = ImageInfo( 
                 writeBlockMethod = data['writeBlockMethod'], 
                 imagingTools = data['imagingTools'],
@@ -177,9 +184,9 @@ class Image( Resource):
                 postCollection = data['postCollection'],
                 size = data['size'],
                 notes = data['notes'],
-                users=users,
-                digital_media_desc = digital_media_desc 
-                )
+                users = users,
+                digital_media_desc = digital_media_desc )
+        
         db.session.add( imageInfo )
         db.session.commit()
         return 200
