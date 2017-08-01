@@ -68,9 +68,11 @@ class CaseSummary( Base ):
     dateReceived = Column( DateTime, nullable = False )
     caseNumber = Column( Integer, nullable = False )
     caseDescription = Column( String(), nullable = False)
-    suspectName = Column( String(), nullable = False)
+    suspectLastName = Column( String(), nullable = False)
+    suspectFirstName = Column( String(), nullable = False)
     collectionLocation = Column( String(), nullable = False)
-    examinerNames = Column( String(), nullable = False)
+    examinerLastName = Column( String(), nullable = False)
+    examinerFirstName = Column( String(), nullable = False)
     labId = Column( Integer, unique = True, nullable = False)
 
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
@@ -79,15 +81,17 @@ class CaseSummary( Base ):
     @property
     def serialize( self ):
         return {
-                'id'                : self.id,
-                'dateReceived'      : dump_datetime(self.dateReceived),
-                'caseNumber'        : self.caseNumber,
-                'caseDescription'   : self.caseDescription,
-                'suspectName'       : self.suspectName, 
-                'collectionLocation': self.collectionLocation,
-                'examinerNames'     : self.examinerNames,
-                'labId'             : self.labId,
-                'userId'            : self.userId,
+                 'id'                : self.id,
+                 'dateReceived'      : dump_datetime(self.dateReceived),
+                 'caseNumber'        : self.caseNumber,
+                 'caseDescription'   : self.caseDescription,
+                 'suspectLastName'   : self.suspectLastName, 
+                 'suspectFirstName'  : self.suspectFirstName, 
+                 'collectionLocation': self.collectionLocation,
+                 'examinerLastName'  : self.examinerLastName,
+                 'examinerFirstName' : self.examinerFirstName,
+                 'labId'             : self.labId,
+                 'userId'            : self.userId,
                 }
 
 class DeviceDesc( Base ):
@@ -200,7 +204,7 @@ class RelevantFiles( Base):
     notes = Column( String(), nullable =False)
     
     userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
-    imagingInfoId = Column( Integer, ForeignKey('image_info.id'), unique=False, nullable=False)
+    imageInfoId = Column( Integer, ForeignKey('image_info.id'), unique=False, nullable=False)
 
     @property
     def serialize( self ):
@@ -212,11 +216,11 @@ class RelevantFiles( Base):
                 'size'                    : self.size,
                 'suggestedReviewPlatform' : self.suggestedReviewPlatform,
                 'notes'                   : self.notes,
-                'imagingInfoId'           : self.imagingInfoId,
+                'imageInfoId'             : self.imageInfoId,
                 'userId'                  : self.userId
               }
 
         
-engine = create_engine( 'postgresql://cctc_user:cctc@localhost/newdb')
+engine = create_engine('postgresql://cctc_user:cctc@localhost/dashboarddb')
 #engine = create_engine( 'postgresql://postgres@localhost/dashboarddb')
-Base.metadata.create_all( engine)
+Base.metadata.create_all(engine)

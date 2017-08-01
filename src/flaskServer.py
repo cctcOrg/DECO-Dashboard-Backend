@@ -63,21 +63,28 @@ class Case(Resource):
    
     # Create a new case
     def post(self, userId):
+        post = "[POST CASE] "
+        
+        print(post + "Getting data from JSON...")
         # Get JSON data from frontend
         data = request.get_json()
 
+        print(post + "Creating row for DB insertion...")
         # Create new case object, populated with values from JSON data
         user = db.session.query(Users).filter_by(id = userId).one()
         case = CaseSummary(
             dateReceived = data['dateReceived'],
             caseNumber = data['caseNumber'],
             caseDescription = data['caseDescription'],
-            suspectName = data['suspectName'],
+            suspectLastName = data['suspectLastName'],
+            suspectFirstName = data['suspectFirstName'],
+            examinerLastName = data['examinerLastName'],
+            examinerFirstName = data['examinerFirstName'],
             collectionLocation = data['collectionLocation'],
-            examinerNames = data['examinerNames'],
             labId = data['labId'],
             users = user )
 
+        print(post + "Inserting into DB...")
         # Stage case for commit to database
         db.session.add(case)
         # Commit case to database
@@ -200,7 +207,7 @@ class File(Resource):
             return file.serialize
         # Get all files for specified image/digital media/device/case for logged in user
         else:
-            files = db.session.query(RelevantFiles).filter_by(digitalMediaDescId = dmId, userId = userId).all()
+            files = db.session.query(RelevantFiles).filter_by(imageInfoId = imgId, userId = userId).all()
             return { "files_list": [file.serialize for file in files ] }
     
     def post(self, userId, caseId, deviceId, dmId, imgId):
@@ -215,7 +222,7 @@ class File(Resource):
         imageInfo = db.session.query(ImageInfo).filter_by(id = imgId).one()
  
       # Get JSON containing some meta data of the file
-        data = request.form
+        data = request.json
         print ("request.form: ", request.form)
         print ("data dict: ", data)
         newFile = request.files['file']
