@@ -9,6 +9,8 @@ from flask_cors import CORS
 import os
 from werkzeug.utils import secure_filename
 import datetime
+from pathlib import Path
+
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/dashboarddb'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:cctc@localhost/newdb'
@@ -190,7 +192,17 @@ class Image(Resource):
         return 200
 
 
-class SaveFileFS(Resource):   
+class File(Resource):   
+    def get(self, userId, caseId, deviceId, dmId, imgId):
+        # Get specific file for specified image/digital media/device/case for logged in user
+        if request.args.get('fileId'):
+            file = db.session.query(RelevantFiles).filter_by(id = request.args.get('fileId'), userId = userId).one()
+            return file.serialize
+        # Get all files for specified image/digital media/device/case for logged in user
+        else:
+            files = db.session.query(RelevantFiles).filter_by(digitalMediaDescId = dmId, userId = userId).all()
+            return { "files_list": [file.serialize for file in files ] }
+    
     def post(self, userId, caseId, deviceId, dmId, imgId):
         post = "[POST FILE] "
 
@@ -200,7 +212,7 @@ class SaveFileFS(Resource):
             return 400
 
         users = db.session.query(Users).filter_by(id = userId).one()
-        imageInfo = db.session.query(ImageInfo).filter_by(id = request.args.get('imgId')).one()
+        imageInfo = db.session.query(ImageInfo).filter_by(id = imgId).one()
  
       # Get JSON containing some meta data of the file
         data = request.form
@@ -215,6 +227,11 @@ class SaveFileFS(Resource):
 
             # Get a new path
             newPath = os.path.join(app.config['UPLOAD_FOLDER'] + "/", fileName)
+           
+            tempFile = Path(newPath)
+            # Check if file exist in directory
+            if tempFile.is_file():
+               return "File with this name already exists!"
 
             # Save file to new path
             newFile.save(newPath)
@@ -233,7 +250,7 @@ class SaveFileFS(Resource):
                 users = users,
                 image_info = imageInfo )
 
-      # Add and stage for commit to database
+        # Add and stage for commit to database
         db.session.add(fileToDB)
         db.session.commit()
 
@@ -272,12 +289,12 @@ class Nuke(Resource):
         return "NUKED"
 
 # Dashboard endpoints
-api.add_resource(UserInfo,   '/evd/user')
-api.add_resource(Case,       '/evd/<int:userId>/case')
-api.add_resource(Device,     '/evd/<int:userId>/case/<int:caseId>/dev')
-api.add_resource(Media,      '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm')
-api.add_resource(Image,      '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img')
-api.add_resource(SaveFileFS, '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/file')
+api.add_resource(UserInfo, '/evd/user')
+api.add_resource(Case,     '/evd/<int:userId>/case')
+api.add_resource(Device,   '/evd/<int:userId>/case/<int:caseId>/dev')
+api.add_resource(Media,    '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm')
+api.add_resource(Image,    '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img')
+api.add_resource(File,     '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/file')
 
 # Endpoint to remove all entries from all tables in the DB
 api.add_resource(Nuke, '/evd/nuke')
