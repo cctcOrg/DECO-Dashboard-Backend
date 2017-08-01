@@ -248,11 +248,15 @@ class Nuke(Resource):
         db.engine.execute("ALTER SEQUENCE case_summary_id_seq RESTART WITH 1;")
 
         print (nuke + "Clearing users table...")
-        db.session.query(Users).delete()
-        db.session.commit()
+        clearTable(Users)
         db.engine.execute("ALTER SEQUENCE users_id_seq RESTART WITH 1;")
 
         return "NUKED"
+    
+    # Remove all entries for some database table
+    def clearTable(tableName):
+        db.session.query(tableName).delete()
+        db.session.commit()
 
 api.add_resource( UserInfo, '/evd/user')
 api.add_resource( Case, '/evd/<int:userId>/case')
