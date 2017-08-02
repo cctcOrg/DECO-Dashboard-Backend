@@ -21,7 +21,7 @@ db = SQLAlchemy(app)
 CORS(app)
 #UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
 UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
-#UPLOAD_FOLDER = '/home/ubuntu/DashboardBackend/Uploads/'
+#UPLOAD_FOLDER = '/home/ubuntu/DashboardBackend/Uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 class UserInfo(Resource):
@@ -268,7 +268,7 @@ class File(Resource):
 # Clear all contents in database
 class Nuke(Resource):
     # Remove all entries for some database table
-    def clearTable(tableName, tablePK, debugString):
+    def clearTable(self, tableName, tablePK, debugString):
         if debugString:
             print(debugString)
 
@@ -282,17 +282,17 @@ class Nuke(Resource):
         nuke = "[NUKE] "
 
         # Remove all entries/rows/tuples starting from RelevantFiles and working backwards
-        Nuke.clearTable(RelevantFiles, "relevant_files_id_seq",
+        self.clearTable(RelevantFiles, "relevant_files_id_seq",
             nuke + "Clearing relevant files table...")
-        Nuke.clearTable(ImageInfo, "image_info_id_seq", 
+        self.clearTable(ImageInfo, "image_info_id_seq", 
             nuke + "Clearing image info table...")
-        Nuke.clearTable(DigitalMediaDesc, "digital_media_desc_id_seq", 
+        self.clearTable(DigitalMediaDesc, "digital_media_desc_id_seq", 
             nuke + "Clearing digital media description table...")
-        Nuke.clearTable(DeviceDesc, "device_desc_id_seq", 
+        self.clearTable(DeviceDesc, "device_desc_id_seq", 
             nuke + "Clearing device table...")
-        Nuke.clearTable(CaseSummary, "case_summary_id_seq", 
+        self.clearTable(CaseSummary, "case_summary_id_seq", 
             nuke + "Clearing case summary table...")
-        Nuke.clearTable(Users, "users_id_seq", 
+        self.clearTable(Users, "users_id_seq", 
             nuke + "Clearing users table...")
 
         return "NUKED"
