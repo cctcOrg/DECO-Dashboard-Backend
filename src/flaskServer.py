@@ -21,7 +21,7 @@ db = SQLAlchemy(app)
 CORS(app)
 #UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
 UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
-#UPLOAD_FOLDER = '/home/ubuntu/DashboardBackend/Uploads'
+#UPLOAD_FOLDER = './uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 class UserInfo(Resource):
