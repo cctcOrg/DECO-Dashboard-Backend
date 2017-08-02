@@ -1,5 +1,5 @@
 import sys
-import enum
+#import enum
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Enum, PrimaryKeyConstraint, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.ext.declarative import declarative_base
@@ -223,4 +223,5 @@ class RelevantFiles( Base):
         
 engine = create_engine('postgresql://cctc_user:cctc@localhost/dashboarddb')
 #engine = create_engine( 'postgresql://postgres@localhost/dashboarddb')
+#engine = create_engine('postgresql://cctc_user:CampSLOcctc@dashboard.chxgxe8hajtr.us-west-1.rds.amazonaws.com:5432/dashboarddb')
 Base.metadata.create_all(engine)

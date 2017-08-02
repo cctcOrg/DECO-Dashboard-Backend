@@ -14,12 +14,14 @@ from pathlib import Path
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/dashboarddb'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:cctc@localhost/newdb'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:CampSLOcctc@dashboard.chxgxe8hajtr.us-west-1.rds.amazonaws.com:5432/dashboarddb'
 app.debug=True
 api = Api(app)
 db = SQLAlchemy(app)
 CORS(app)
 #UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
 UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
+#UPLOAD_FOLDER = '/home/ubuntu/DashboardBackend/Uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 class UserInfo(Resource):
@@ -309,3 +311,4 @@ api.add_resource(Nuke, '/evd/nuke')
 if __name__ == "__main__":
     #app.run(host = app.run(host = '129.65.247.21', port = 5000), debug=True)
     app.run(host = app.run(host = '129.65.100.50', port = 5000, use_debugger=True, threaded=True), debug=True)
+#    app.run( host = app.run( host ='ec2-54-153-120-156.us-west-1.compute.amazonaws.com', port = 80, use_debugger=True, threaded=True), debug=True)
