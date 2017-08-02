@@ -831,9 +831,21 @@
 								},
 								{
 									"description": "",
-									"key": "json",
+									"key": "contentDesc",
 									"type": "text",
-									"value": "{\"contentDesc\":\"This is a content description\",\n\"suggestedReviewPlatform\":\"Some suggested review platform\",\n\"notes\":\"Some random ass notes in this random ass JSON\"\n}"
+									"value": "This is a content description"
+								},
+								{
+									"key": "suggestedReviewPlatform",
+									"value": "Some suggested review platform",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "notes",
+									"value": "Some random ass notes in this random ass JSON",
+									"description": "",
+									"type": "text"
 								}
 							]
 						},
@@ -855,8 +867,10 @@
 									"jsonData = jsonData[\"files_list\"]",
 									"",
 									"tests[\"contentDesc\"] = jsonData[0].contentDesc === \"This is a content description\";",
+									"tests[\"imageInfoId\"] = jsonData[0].imageInfoId == postman.getGlobalVariable(\"userId1.caseId1.deviceDescId1.dmdId1.imageId1\")",
 									"tests[\"suggestedReviewPlatform\"] = jsonData[0].suggestedReviewPlatform === \"Some suggested review platform\";",
-									"tests[\"format\"] = jsonData[0].format === \"Some random ass notes in this random ass JSON\";"
+									"tests[\"notes\"] = jsonData[0].notes === \"Some random ass notes in this random ass JSON\";",
+									"tests[\"userId\"] = jsonData[0].userId == postman.getGlobalVariable(\"userId1\")"
 								]
 							}
 						}
@@ -893,7 +907,7 @@
 									"",
 									"tests[\"contentDesc\"] = jsonData.contentDesc === \"This is a content description\";",
 									"tests[\"suggestedReviewPlatform\"] = jsonData.suggestedReviewPlatform === \"Some suggested review platform\";",
-									"tests[\"format\"] = jsonData.format === \"Some random ass notes in this random ass JSON\";"
+									"tests[\"notes\"] = jsonData.notes === \"Some random ass notes in this random ass JSON\";"
 								]
 							}
 						}
