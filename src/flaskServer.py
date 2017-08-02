@@ -202,6 +202,28 @@ class Image(Resource):
 
 
 class File(Resource):   
+    def sendJSON(self, userId, imgId, request, newPath, fileName, fileSize):
+        data = request.form
+
+        print("[POST FILE] Send JSON data related to file just uploaded...")
+        users = db.session.query(Users).filter_by(id = userId).one()
+        imageInfo = db.session.query(ImageInfo).filter_by(id = imgId).one()
+ 
+        # Create entry in database
+        fileToDB = RelevantFiles(
+            fileName = fileName,  
+            path = os.path.abspath(newPath),
+            contentDesc = data['contentDesc'],
+            size = fileSize,
+            suggestedReviewPlatform = data['suggestedReviewPlatform'],
+            notes = data['notes'],
+            users = users,
+            image_info = imageInfo )
+
+        # Add and stage for commit to database
+        db.session.add(fileToDB)
+        db.session.commit()
+        
     def get(self, userId, caseId, deviceId, dmId, imgId):
         # Get specific file for specified image/digital media/device/case for logged in user
         if request.args.get('fileId'):
@@ -220,23 +242,21 @@ class File(Resource):
             print (post + 'No file in request')
             return 400
 
-        users = db.session.query(Users).filter_by(id = userId).one()
-        imageInfo = db.session.query(ImageInfo).filter_by(id = imgId).one()
- 
       # Get JSON containing some meta data of the file
-        data = request.json
+      # data = request.json['json']
         print ("request.form: ", request.form)
-        print ("data dict: ", data)
+        #print ("data dict: ", data)
         newFile = request.files['file']
         print(newFile.filename)
         
         if newFile:
-        # Get file name securely
+            # Get file name securely
             fileName = secure_filename(newFile.filename)
 
             # Get a new path
             newPath = os.path.join(app.config['UPLOAD_FOLDER'] + "/", fileName)
            
+            print(post + "Checking for dup files...")
             # Check if file exist in directory
             tempFile = Path(newPath)
             if tempFile.is_file():
@@ -245,23 +265,11 @@ class File(Resource):
             # Save file to new path
             newFile.save(newPath)
 
+            print(post + "Getting file size...")
             # Get file size TODO: Figure out if st_size returns in MB
             fileSize = os.stat(UPLOAD_FOLDER + '/' + fileName).st_size
 
-            # Create entry in database
-            fileToDB = RelevantFiles(
-                fileName = fileName,  
-                path = os.path.abspath(newPath),
-                contentDesc = data["contentDesc"],
-                size = fileSize,
-                suggestedReviewPlatform = data["suggestedReviewPlatform"],
-                notes = data["notes"],
-                users = users,
-                image_info = imageInfo )
-
-        # Add and stage for commit to database
-        db.session.add(fileToDB)
-        db.session.commit()
+        self.sendJSON(userId, imgId, request, newPath, fileName, fileSize)
 
         return 200
 
