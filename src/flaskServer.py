@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_file
 import json
 from flask_sqlalchemy import SQLAlchemy
 from flask import Response, jsonify, request, redirect, render_template, url_for
@@ -228,7 +228,11 @@ class File(Resource):
         # Get specific file for specified image/digital media/device/case for logged in user
         if request.args.get('fileId'):
             file = db.session.query(RelevantFiles).filter_by(id = request.args.get('fileId'), userId = userId).one()
-            return file.serialize
+            
+            #jsonData = file.get_json()
+            
+            #return file.serialize
+            return file.serialize, send_file(UPLOAD_FOLDER + "/puppy.jpg")
         # Get all files for specified image/digital media/device/case for logged in user
         else:
             files = db.session.query(RelevantFiles).filter_by(imageInfoId = imgId, userId = userId).all()
@@ -242,10 +246,6 @@ class File(Resource):
             print (post + 'No file in request')
             return 400
 
-      # Get JSON containing some meta data of the file
-      # data = request.json['json']
-        print ("request.form: ", request.form)
-        #print ("data dict: ", data)
         newFile = request.files['file']
         print(newFile.filename)
         
@@ -268,7 +268,8 @@ class File(Resource):
             print(post + "Getting file size...")
             # Get file size TODO: Figure out if st_size returns in MB
             fileSize = os.stat(UPLOAD_FOLDER + '/' + fileName).st_size
-
+        
+        # Get JSON associated with the file
         self.sendJSON(userId, imgId, request, newPath, fileName, fileSize)
 
         return 200
