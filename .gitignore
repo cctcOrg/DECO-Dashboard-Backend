@@ -5,3 +5,6 @@
 ./Uploads
 
 */__pycache__
+
+# Ignore AWS keys
+*.pem
