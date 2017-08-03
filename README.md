@@ -31,8 +31,8 @@ Post request that creates 'User' entry:
 http://localhost:5000/evd/user`
 
 # Resources 
-## AWS Docker Nginx Tutorial
+**AWS Docker Nginx Tutorial**
 https://ianlondon.github.io/blog/deploy-flask-docker-nginx/
 
-## Flask User Session Management
+**Flask User Session Management**
 https://flask-login.readthedocs.io/en/latest/
