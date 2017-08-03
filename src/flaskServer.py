@@ -14,7 +14,7 @@ from pathlib import Path
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/dashboarddb'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:cctc@localhost/newdb'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:CampSLOcctc@dashboard.chxgxe8hajtr.us-west-1.rds.amazonaws.com:5432/dashboarddb'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc:CampSLOcctc@dashdb.cftpr0gv1icv.us-west-2.rds.amazonaws.com:5432/dashdb'
 app.debug=True
 api = Api(app)
 db = SQLAlchemy(app)
@@ -333,4 +333,4 @@ api.add_resource(Nuke, '/evd/nuke')
 if __name__ == "__main__":
     #app.run(host = app.run(host = '129.65.247.21', port = 5000), debug=True)
     app.run(host = app.run(host = '129.65.100.50', port = 5000, use_debugger=True, threaded=True), debug=True)
-#    app.run( host = app.run( host ='ec2-54-153-120-156.us-west-1.compute.amazonaws.com', port = 80, use_debugger=True, threaded=True), debug=True)
+#    app.run( host = app.run( host ='ec2-34-212-218-147.us-west-2.compute.amazonaws.com', port = 80, use_debugger=True, threaded=True), debug=True)
