@@ -231,11 +231,9 @@ class File(Resource):
             file = db.session.query(RelevantFiles).filter_by(id = request.args.get('fileId'), userId = userId).one()
 
             return send_file(file.path)
-        # TODO: Need to zip files and send the zip?
-        # Get all files for specified image/digital media/device/case for logged in user
+        # Need file id, return 400
         else:
-            files = db.session.query(RelevantFiles).filter_by(imageInfoId = imgId, userId = userId).all()
-            return { "files_list": [file.serialize for file in files ] }
+            return abort(400), "Need fileId as query parameter!"
     
     def post(self, userId, caseId, deviceId, dmId, imgId):
         post = "[POST FILE] "
