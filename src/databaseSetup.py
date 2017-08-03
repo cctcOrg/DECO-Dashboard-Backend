@@ -223,5 +223,5 @@ class RelevantFiles( Base):
         
 engine = create_engine('postgresql://cctc_user:cctc@localhost/dashboarddb')
 #engine = create_engine( 'postgresql://postgres@localhost/dashboarddb')
-#engine = create_engine('postgresql://cctc_user:CampSLOcctc@dashboard.chxgxe8hajtr.us-west-1.rds.amazonaws.com:5432/dashboarddb')
+#engine = create_engine('postgresql://cctc:CampSLOcctc@dashdb.cftpr0gv1icv.us-west-2.rds.amazonaws.com:5432/dashdb')
 Base.metadata.create_all(engine)
