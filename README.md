@@ -23,7 +23,6 @@ GitHub page for CCTC Evidence Dashboard Backend Team (Duc, Jackson, and Tyler).
         3. Restart database engine: `sudo service postgresql restart`
 
 # CURL Request to Flask Server
-
 Post request that creates 'User' entry:
 `curl -H "Content-Type: application/json" -X POST -d 
 '{"email": "someEmail@domain.com", 
@@ -31,5 +30,9 @@ Post request that creates 'User' entry:
 "firstName": "Alex"}' 
 http://localhost:5000/evd/user`
 
-# AWS Docker Nginx tutorial
+# Resources 
+## AWS Docker Nginx Tutorial
 https://ianlondon.github.io/blog/deploy-flask-docker-nginx/
+
+## Flask User Session Management
+https://flask-login.readthedocs.io/en/latest/
