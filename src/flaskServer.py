@@ -202,6 +202,7 @@ class Image(Resource):
 
 
 class File(Resource):   
+    # Helper function for File POST
     def sendJSON(self, userId, imgId, request, newPath, fileName, fileSize):
         data = request.form
 
@@ -228,11 +229,9 @@ class File(Resource):
         # Get specific file for specified image/digital media/device/case for logged in user
         if request.args.get('fileId'):
             file = db.session.query(RelevantFiles).filter_by(id = request.args.get('fileId'), userId = userId).one()
-            
-            #jsonData = file.get_json()
-            
-            #return file.serialize
-            return file.serialize, send_file(UPLOAD_FOLDER + "/puppy.jpg")
+
+            return send_file(file.path)
+        # TODO: Need to zip files and send the zip?
         # Get all files for specified image/digital media/device/case for logged in user
         else:
             files = db.session.query(RelevantFiles).filter_by(imageInfoId = imgId, userId = userId).all()
@@ -244,7 +243,7 @@ class File(Resource):
         # Check if POST request has file part
         if 'file' not in request.files:
             print (post + 'No file in request')
-            return 400
+            return abort(400), "No file to upload."
 
         newFile = request.files['file']
         print(newFile.filename)
@@ -266,7 +265,8 @@ class File(Resource):
             newFile.save(newPath)
 
             print(post + "Getting file size...")
-            # Get file size TODO: Figure out if st_size returns in MB
+            # Get file size, returns in bytes
+            # If you want megabytes, multiple by one million
             fileSize = os.stat(UPLOAD_FOLDER + '/' + fileName).st_size
         
         # Get JSON associated with the file
@@ -274,6 +274,19 @@ class File(Resource):
 
         return 200
 
+class FileMetaData(Resource):   
+    def get(self, userId, caseId, deviceId, dmId, imgId):
+        # Get specific file for specified image/digital media/device/case for logged in user
+        if request.args.get('fileId'):
+            file = db.session.query(RelevantFiles).filter_by(id = request.args.get('fileId'), userId = userId).one()
+
+            return file.serialize
+        # Get all files for specified image/digital media/device/case for logged in user
+        else:
+            files = db.session.query(RelevantFiles).filter_by(imageInfoId = imgId, userId = userId).all()
+            return { "files_list": [file.serialize for file in files ] }
+    
+    def post(self, userId, caseId, deviceId, dmId, imgId):
 # Clear all contents in database
 class Nuke(Resource):
     # Remove all entries for some database table
@@ -307,12 +320,13 @@ class Nuke(Resource):
         return "NUKED"
 
 # Dashboard endpoints
-api.add_resource(UserInfo, '/evd/user')
-api.add_resource(Case,     '/evd/<int:userId>/case')
-api.add_resource(Device,   '/evd/<int:userId>/case/<int:caseId>/dev')
-api.add_resource(Media,    '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm')
-api.add_resource(Image,    '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img')
-api.add_resource(File,     '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/file')
+api.add_resource(UserInfo,     '/evd/user')
+api.add_resource(Case,         '/evd/<int:userId>/case')
+api.add_resource(Device,       '/evd/<int:userId>/case/<int:caseId>/dev')
+api.add_resource(Media,        '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm')
+api.add_resource(Image,        '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img')
+api.add_resource(File,         '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/file')
+api.add_resource(FileMetaData, '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/filemd')
 
 # Endpoint to remove all entries from all tables in the DB
 api.add_resource(Nuke, '/evd/nuke')
