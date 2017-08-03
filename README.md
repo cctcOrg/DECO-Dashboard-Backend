@@ -36,3 +36,6 @@ https://ianlondon.github.io/blog/deploy-flask-docker-nginx/
 
 **Flask User Session Management**
 https://flask-login.readthedocs.io/en/latest/
+
+**Warrant Serverless Authentication - Python library for using AWS Cognito**
+https://github.com/capless/warrant
