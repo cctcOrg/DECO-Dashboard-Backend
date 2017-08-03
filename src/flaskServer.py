@@ -286,7 +286,6 @@ class FileMetaData(Resource):
             files = db.session.query(RelevantFiles).filter_by(imageInfoId = imgId, userId = userId).all()
             return { "files_list": [file.serialize for file in files ] }
     
-    def post(self, userId, caseId, deviceId, dmId, imgId):
 # Clear all contents in database
 class Nuke(Resource):
     # Remove all entries for some database table
