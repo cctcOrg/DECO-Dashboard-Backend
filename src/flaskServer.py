@@ -3,7 +3,7 @@ import json
 from flask_sqlalchemy import SQLAlchemy
 from flask import Response, jsonify, request, redirect, render_template, url_for
 from sqlalchemy import create_engine
-from databaseSetup import Users, CaseSummary, DeviceDesc, DigitalMediaDesc, ImageInfo, RelevantFiles  
+from databaseSetup import CaseSummary, DeviceDesc, DigitalMediaDesc, ImageInfo, RelevantFiles  
 from flask_restful import reqparse, abort, Api, Resource
 from flask_cors import CORS
 import os
