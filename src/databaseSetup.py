@@ -40,27 +40,6 @@ def dump_datetime( value ):
         return None
     return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
 
-class Users( Base ):
-    __tablename__ = 'users'
-    id = Column (Integer, primary_key = True)
-    email = Column( String(), unique=True, nullable = False)
-    lastName = Column( String(), nullable = False)
-    firstName = Column( String(), nullable = False)    
-
-    case_summary = relationship('CaseSummary', backref="users") 
-    deviceDescription = relationship('DeviceDesc', backref="users")
-    digitalMediaDesc = relationship('DigitalMediaDesc', backref="users")
-    imagingInformation = relationship('ImageInfo', backref="users")
-    relevantFiles = relationship('RelevantFiles', backref="users")
-
-    @property
-    def serialize( self ):
-        return {
-                  'id'          : self.id,
-                  'email'       : self.email,
-                  'lastName'    : self.lastName,
-                  'firstName'   : self.firstName
-               }
 
 class CaseSummary( Base ):
     __tablename__ = 'case_summary'
@@ -74,8 +53,8 @@ class CaseSummary( Base ):
     examinerLastName = Column( String(), nullable = False)
     examinerFirstName = Column( String(), nullable = False)
     labId = Column( Integer, unique = True, nullable = False)
+    createdBy = Column( String(), unique=False, nullable=False)
 
-    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     deviceDescription = relationship('DeviceDesc', backref="case_summary")
 
     @property
@@ -91,7 +70,7 @@ class CaseSummary( Base ):
                  'examinerLastName'  : self.examinerLastName,
                  'examinerFirstName' : self.examinerFirstName,
                  'labId'             : self.labId,
-                 'userId'            : self.userId,
+                 'createdBy'         : self.createdBy,
                 }
 
 class DeviceDesc( Base ):
@@ -107,8 +86,8 @@ class DeviceDesc( Base ):
     localDateTime = Column( DateTime, nullable = False)
     typeOfCollection = Column( CollectionTypeEnum, nullable = False)
     mediaStatus = Column( MediaStatusEnum, nullable = False)
-
-    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
+    createdBy = Column( String(), unique=False, nullable=False)
+  
     caseSummaryId = Column( Integer, ForeignKey('case_summary.id'), unique=False, nullable=False)
     digitalMediaDesc = relationship('DigitalMediaDesc', backref="device_desc")
 
@@ -127,7 +106,7 @@ class DeviceDesc( Base ):
                 'typeOfCollection'  : self.typeOfCollection,
                 'mediaStatus'       : self.mediaStatus,
                 'caseSummaryId'     : self.caseSummaryId,
-                'userId'            : self.userId
+                'createdBy'         : self.createdBy
               }
 
 class DigitalMediaDesc( Base):
@@ -138,8 +117,8 @@ class DigitalMediaDesc( Base):
     model = Column( String(), nullable = False)
     serialNumber = Column( Integer, nullable = False)
     capacity = Column( Integer, nullable = False)
+    createdBy = Column( String(), unique=False, nullable=False)
 
-    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     deviceDescId = Column( Integer, ForeignKey('device_desc.id'), unique=False, nullable=False)
     imageInfo = relationship('ImageInfo', backref="digital_media_desc")
 
@@ -153,7 +132,7 @@ class DigitalMediaDesc( Base):
                  'serialNumber'    : self.serialNumber,
                  'capacity'        : self.capacity,
                  'deviceDescId'    : self.deviceDescId,
-                 'userId'          : self.userId
+                 'createdBy'       : self.createdBy
                }
 
    
@@ -170,8 +149,8 @@ class ImageInfo( Base ):
     postCollection = Column( String(), nullable =False)
     size = Column( Integer, nullable = False)
     notes = Column( String(), nullable =False)
+    createdBy = Column( String(), unique=False, nullable=False)
 
-    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     digitalMediaDescId = Column( Integer, ForeignKey('digital_media_desc.id'), unique=False, nullable=False)
     relevantFiles = relationship('RelevantFiles', backref="image_info")
 
@@ -190,7 +169,7 @@ class ImageInfo( Base ):
                 'size'                     : self.size,
                 'notes'                    : self.notes,
                 'digitalMediaDescId'       : self.digitalMediaDescId,
-                'userId'                   : self.userId
+                'createdBy'                : self.createdBy
               }
 
 class RelevantFiles( Base):
@@ -202,8 +181,8 @@ class RelevantFiles( Base):
     size = Column( Integer, nullable = False)
     suggestedReviewPlatform = Column( String(), nullable =False)
     notes = Column( String(), nullable =False)
+    createdBy = Column( String(), unique=False, nullable=False)
     
-    userId = Column( Integer, ForeignKey('users.id'), unique=False, nullable=False)
     imageInfoId = Column( Integer, ForeignKey('image_info.id'), unique=False, nullable=False)
 
     @property
@@ -217,7 +196,7 @@ class RelevantFiles( Base):
                 'suggestedReviewPlatform' : self.suggestedReviewPlatform,
                 'notes'                   : self.notes,
                 'imageInfoId'             : self.imageInfoId,
-                'userId'                  : self.userId
+                'createdBy'               : self.createdBy
               }
 
         

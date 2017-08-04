@@ -24,47 +24,20 @@ UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
 #UPLOAD_FOLDER = './uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-class UserInfo(Resource):
-    def get(self):
-        # Query User table by email 
-        user = db.session.query(Users).filter_by(email = request.args.get('email')).first()
-        return user.serialize
-
-    # Create a new user 
-    def post(self):
-        post = "[POST USER] "
-        
-        print(post + "Getting data from JSON...")
-        data = request.get_json()
-
-        print(post + "Creating row for DB insertion...")
-        users = Users( 
-            email = data['email'],
-            lastName = data['lastName'],
-            firstName = data['firstName'] )
-
-        print(post + "Inserting into DB...")
-        # Stage and commit to database
-        db.session.add(users)
-        db.session.commit()
-
-        print(post + "RETURNING 200")
-        return 200
-
 class Case(Resource):
    # Return case summary
-    def get(self, userId):
+    def get(self, userHash):
         # Get a specific case for logged in user
         if request.args.get('caseId'):
-            case = db.session.query(CaseSummary).filter_by(id = request.args.get('caseId'), userId = userId).one()
+            case = db.session.query(CaseSummary).filter_by(id = request.args.get('caseId'), createdBy = userHash).one()
             return case.serialize
         # Get all cases for logged in user
         else:
-            cases = db.session.query(CaseSummary).filter_by(userId = userId).all()
+            cases = db.session.query(CaseSummary).filter_by(createdBy = userHash).all()
             return { "case_summary_list": [case.serialize for case in cases] }
    
     # Create a new case
-    def post(self, userId):
+    def post(self, userHash):
         post = "[POST CASE] "
         
         print(post + "Getting data from JSON...")
@@ -73,7 +46,6 @@ class Case(Resource):
 
         print(post + "Creating row for DB insertion...")
         # Create new case object, populated with values from JSON data
-        user = db.session.query(Users).filter_by(id = userId).one()
         case = CaseSummary(
             dateReceived = data['dateReceived'],
             caseNumber = data['caseNumber'],
@@ -84,7 +56,7 @@ class Case(Resource):
             examinerFirstName = data['examinerFirstName'],
             collectionLocation = data['collectionLocation'],
             labId = data['labId'],
-            users = user )
+            createdBy = userHash )
 
         print(post + "Inserting into DB...")
         # Stage case for commit to database
@@ -94,29 +66,28 @@ class Case(Resource):
         return 200
 
 class Device(Resource):
-    def get(self, userId, caseId):
+    def get(self, userHash, caseId):
         get = "[GET DEV] "
         
         # Get a specific device for the specified case for logged in user
         if request.args.get('deviceId'):
-            device = db.session.query(DeviceDesc).filter_by(id = request.args.get('deviceId'), userId = userId).one()
+            device = db.session.query(DeviceDesc).filter_by(id = request.args.get('deviceId'), createdBy = userHash).one()
             return device.serialize
         # Get all devices for specified case for logged in user
         else:
             print(get + "Getting all devices belonging to case, caseId...")
-            devices = db.session.query(DeviceDesc).filter_by(caseSummaryId = caseId, userId = userId).all()
+            devices = db.session.query(DeviceDesc).filter_by(caseSummaryId = caseId, createdBy = userHash).all()
         
             print(get + "Returning JSON...")
             return { "device_list": [device.serialize for device in devices] }
 
-    def post(self, userId, caseId):
+    def post(self, userHash, caseId):
         post = "[POST DEV]"
 
         print(post + "Getting JSON...")
         data = request.get_json()
 
         print(post + "Creating entry for database...")
-        users = db.session.query(Users).filter_by(id = userId).one()
         case_summary = db.session.query(CaseSummary).filter_by(id = caseId).one()
         deviceDesc=DeviceDesc( 
                 deviceDescription = data['deviceDescription'],
@@ -129,7 +100,7 @@ class Device(Resource):
                 localDateTime = data['localDateTime'],
                 typeOfCollection = data['typeOfCollection'],
                 mediaStatus = data['mediaStatus'],
-                users = users,
+                createdBy = userHash,
                 case_summary = case_summary )
         
         print(post + "Adding to database...")
@@ -138,20 +109,19 @@ class Device(Resource):
         return 200
 
 class Media(Resource):
-    def get(self, userId, caseId, deviceId):
+    def get(self, userHash, caseId, deviceId):
         # Get specific digital media for specified device/case for logged in user
         if request.args.get('dmId'):
-            device = db.session.query(DigitalMediaDesc).filter_by(id = request.args.get('dmId'), userId = userId).one()
+            device = db.session.query(DigitalMediaDesc).filter_by(id = request.args.get('dmId'), createdBy = userHash).one()
             return device.serialize
         # Get all digital media for specified device/case for logged in user
         else:
-            medias = db.session.query(DigitalMediaDesc).filter_by(deviceDescId = deviceId, userId = userId).all()
+            medias = db.session.query(DigitalMediaDesc).filter_by(deviceDescId = deviceId, createdBy = userHash).all()
             return { "digital_media_list": [media.serialize for media in medias] }
 
-    def post(self, userId, caseId, deviceId):
+    def post(self, userHash, caseId, deviceId):
         data = request.get_json()
 
-        users = db.session.query(Users).filter_by(id = userId).one()
         deviceDesc = db.session.query(DeviceDesc).filter_by(id = deviceId).one()
         media = DigitalMediaDesc(
                 storageId = data['storageId'],
@@ -159,7 +129,7 @@ class Media(Resource):
                 model = data['model'],
                 serialNumber = data['serialNumber'],
                 capacity = data['capacity'],
-                users = users,
+                createdBy = userHash,
                 device_desc = deviceDesc )
        
         db.session.add(media)
@@ -167,20 +137,19 @@ class Media(Resource):
         return 200
  
 class Image(Resource):
-    def get(self, userId, caseId, deviceId, dmId):
+    def get(self, userHash, caseId, deviceId, dmId):
         # Get specific image for specified digital media/device/case for logged in user
         if request.args.get('imgId'):
-            image = db.session.query(ImageInfo).filter_by(id = request.args.get('imgId'), userId = userId).one()
+            image = db.session.query(ImageInfo).filter_by(id = request.args.get('imgId'), createdBy = userHash).one()
             return image.serialize
         # Get all images for specified digital media/device/case for logged in user
         else:
-            images = db.session.query(ImageInfo).filter_by(digitalMediaDescId = dmId, userId = userId).all()
+            images = db.session.query(ImageInfo).filter_by(digitalMediaDescId = dmId, createdBy = userHash).all()
             return { "images_list": [image.serialize for image in images ] }
 
-    def post(self, userId, caseId, deviceId, dmId):
+    def post(self, userHash, caseId, deviceId, dmId):
         data = request.get_json()
         
-        users = db.session.query(Users).filter_by(id = userId).one()
         digital_media_desc = db.session.query(DigitalMediaDesc).filter_by(id = dmId).one()
         imageInfo = ImageInfo( 
                 writeBlockMethod = data['writeBlockMethod'], 
@@ -193,7 +162,7 @@ class Image(Resource):
                 postCollection = data['postCollection'],
                 size = data['size'],
                 notes = data['notes'],
-                users = users,
+                createdBy = userHash,
                 digital_media_desc = digital_media_desc )
         
         db.session.add(imageInfo)
@@ -203,11 +172,10 @@ class Image(Resource):
 
 class File(Resource):   
     # Helper function for File POST
-    def sendJSON(self, userId, imgId, request, newPath, fileName, fileSize):
+    def sendJSON(self, userHash, imgId, request, newPath, fileName, fileSize):
         data = request.form
 
         print("[POST FILE] Send JSON data related to file just uploaded...")
-        users = db.session.query(Users).filter_by(id = userId).one()
         imageInfo = db.session.query(ImageInfo).filter_by(id = imgId).one()
  
         # Create entry in database
@@ -218,24 +186,24 @@ class File(Resource):
             size = fileSize,
             suggestedReviewPlatform = data['suggestedReviewPlatform'],
             notes = data['notes'],
-            users = users,
+            createdBy = userHash,
             image_info = imageInfo )
 
         # Add and stage for commit to database
         db.session.add(fileToDB)
         db.session.commit()
         
-    def get(self, userId, caseId, deviceId, dmId, imgId):
+    def get(self, userHash, caseId, deviceId, dmId, imgId):
         # Get specific file for specified image/digital media/device/case for logged in user
         if request.args.get('fileId'):
-            file = db.session.query(RelevantFiles).filter_by(id = request.args.get('fileId'), userId = userId).one()
+            file = db.session.query(RelevantFiles).filter_by(id = request.args.get('fileId'), createdBy = userHash).one()
 
             return send_file(file.path)
         # Need file id, return 400
         else:
             return abort(400), "Need fileId as query parameter!"
     
-    def post(self, userId, caseId, deviceId, dmId, imgId):
+    def post(self, userHash, caseId, deviceId, dmId, imgId):
         post = "[POST FILE] "
 
         # Check if POST request has file part
@@ -268,20 +236,20 @@ class File(Resource):
             fileSize = os.stat(UPLOAD_FOLDER + '/' + fileName).st_size
         
         # Get JSON associated with the file
-        self.sendJSON(userId, imgId, request, newPath, fileName, fileSize)
+        self.sendJSON(userHash, imgId, request, newPath, fileName, fileSize)
 
         return 200
 
 class FileMetaData(Resource):   
-    def get(self, userId, caseId, deviceId, dmId, imgId):
+    def get(self, userHash, caseId, deviceId, dmId, imgId):
         # Get specific file for specified image/digital media/device/case for logged in user
         if request.args.get('fileId'):
-            file = db.session.query(RelevantFiles).filter_by(id = request.args.get('fileId'), userId = userId).one()
+            file = db.session.query(RelevantFiles).filter_by(id = request.args.get('fileId'), createdBy = userHash).one()
 
             return file.serialize
         # Get all files for specified image/digital media/device/case for logged in user
         else:
-            files = db.session.query(RelevantFiles).filter_by(imageInfoId = imgId, userId = userId).all()
+            files = db.session.query(RelevantFiles).filter_by(imageInfoId = imgId, createdBy = userHash).all()
             return { "files_list": [file.serialize for file in files ] }
     
 # Clear all contents in database
@@ -311,19 +279,16 @@ class Nuke(Resource):
             nuke + "Clearing device table...")
         self.clearTable(CaseSummary, "case_summary_id_seq", 
             nuke + "Clearing case summary table...")
-        self.clearTable(Users, "users_id_seq", 
-            nuke + "Clearing users table...")
 
         return "NUKED"
 
 # Dashboard endpoints
-api.add_resource(UserInfo,     '/evd/user')
-api.add_resource(Case,         '/evd/<int:userId>/case')
-api.add_resource(Device,       '/evd/<int:userId>/case/<int:caseId>/dev')
-api.add_resource(Media,        '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm')
-api.add_resource(Image,        '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img')
-api.add_resource(File,         '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/file')
-api.add_resource(FileMetaData, '/evd/<int:userId>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/filemd')
+api.add_resource(Case,         '/evd/<int:userHash>/case')
+api.add_resource(Device,       '/evd/<int:userHash>/case/<int:caseId>/dev')
+api.add_resource(Media,        '/evd/<int:userHash>/case/<int:caseId>/dev/<int:deviceId>/dm')
+api.add_resource(Image,        '/evd/<int:userHash>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img')
+api.add_resource(File,         '/evd/<int:userHash>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/file')
+api.add_resource(FileMetaData, '/evd/<int:userHash>/case/<int:caseId>/dev/<int:deviceId>/dm/<int:dmId>/img/<int:imgId>/filemd')
 
 # Endpoint to remove all entries from all tables in the DB
 api.add_resource(Nuke, '/evd/nuke')
