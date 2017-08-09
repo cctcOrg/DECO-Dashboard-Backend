@@ -52,7 +52,11 @@ class Users( Base ):
     digitalMediaDesc = relationship('DigitalMediaDesc', backref="users")
     imagingInformation = relationship('ImageInfo', backref="users")
     relevantFiles = relationship('RelevantFiles', backref="users")
-
+    def __str__(self):
+        string = ''
+        for k,v in self.__dict__.items():
+            string += f"{k}: {v}\n"
+        return string
     @property
     def serialize( self ):
         return {
@@ -221,7 +225,7 @@ class RelevantFiles( Base):
               }
 
         
-engine = create_engine('postgresql://cctc_user:cctc@localhost/dashboarddb')
-#engine = create_engine( 'postgresql://postgres@localhost/dashboarddb')
+#engine = create_engine('postgresql://cctc_user:cctc@localhost/dashboarddb')
+engine = create_engine( 'postgresql://postgres@localhost/newdb')
 #engine = create_engine('postgresql://cctc:CampSLOcctc@dashdb.cftpr0gv1icv.us-west-2.rds.amazonaws.com:5432/dashdb')
 Base.metadata.create_all(engine)

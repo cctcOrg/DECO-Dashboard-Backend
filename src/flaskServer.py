@@ -12,17 +12,29 @@ import datetime
 from pathlib import Path
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/dashboarddb'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:cctc@localhost/newdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/newdb'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc_user:cctc@localhost/newdb'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cctc:CampSLOcctc@dashdb.cftpr0gv1icv.us-west-2.rds.amazonaws.com:5432/dashdb'
 app.debug=True
 api = Api(app)
 db = SQLAlchemy(app)
 CORS(app)
-#UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
-UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
+UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
+#UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
 #UPLOAD_FOLDER = './uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def iterateJsonUpdate( row, data, ignore=None ):
+    if ignore:
+        for key in ignore:
+            try:
+                del data[key]
+            except:
+                pass
+    for key in data.keys():
+        setattr(row, key, data[key])
+        #print( "key = " + row.__dict__[key] + " , " + "row.firstname = " + row.firstName)
+    return row
 
 class UserInfo(Resource):
     def get(self):
@@ -36,7 +48,7 @@ class UserInfo(Resource):
         
         print(post + "Getting data from JSON...")
         data = request.get_json()
-
+        print( "data: ", data )
         print(post + "Creating row for DB insertion...")
         users = Users( 
             email = data['email'],
@@ -49,6 +61,22 @@ class UserInfo(Resource):
         db.session.commit()
 
         print(post + "RETURNING 200")
+        return 200
+
+    def put( self ):
+        put = "[PUT USER] "
+        print(put + "Getting data from JSON...")
+        data = request.get_json()
+        print( put + "Editing row of user table...")
+        user = db.session.query(Users).filter_by( email = request.args.get('email')).first() 
+        iterateJsonUpdate( user, data, ['email']) 
+        print( put + "Inserting into DB...")
+        db.session.commit()
+        return 200
+
+    def delete( self ):
+        db.session.query( Users ).filter_by( email = request.args.get('email')).delete()
+        db.session.commit()
         return 200
 
 class Case(Resource):
@@ -64,7 +92,7 @@ class Case(Resource):
             return { "case_summary_list": [case.serialize for case in cases] }
    
     # Create a new case
-    def post(self, userId):
+    def post( self, userId ):
         post = "[POST CASE] "
         
         print(post + "Getting data from JSON...")
@@ -90,6 +118,22 @@ class Case(Resource):
         # Stage case for commit to database
         db.session.add(case)
         # Commit case to database
+        db.session.commit()
+        return 200
+
+    def put( self, userId ):
+        put = "[PUT CASE] "
+        print(put + "Getting data from JSON...")
+        data = request.get_json()
+        print( put + "Editing row of case table...")
+        case = db.session.query(CaseSummary).filter_by( id = request.args.get('caseId')).first() 
+        iterateJsonUpdate( case, data ) 
+        print( put + "Committing to DB...")
+        db.session.commit()
+        return 200
+   
+    def delete( self, userId ):
+        db.session.query(CaseSummary).filter_by(id = request.args.get('caseId')).delete()
         db.session.commit()
         return 200
 
@@ -136,6 +180,22 @@ class Device(Resource):
         db.session.add( deviceDesc )
         db.session.commit()
         return 200
+    
+    def put( self, userId, caseId ):
+        put = "[PUT DEVICE] "
+        print(put + "Getting data from JSON...")
+        data = request.get_json()
+        print( put + "Editing row of device table...")
+        device = db.session.query(DeviceDesc).filter_by( id = request.args.get('deviceId')).first() 
+        iterateJsonUpdate( device, data ) 
+        print( put + "Committing to DB...")
+        db.session.commit()
+        return 200
+
+    def delete( self, userId, caseId ):
+        db.session.query( DeviceDesc ).filter_by( id = request.args.get("deviceId")).delete()
+        db.session.commit()
+        return 200
 
 class Media(Resource):
     def get(self, userId, caseId, deviceId):
@@ -165,7 +225,23 @@ class Media(Resource):
         db.session.add(media)
         db.session.commit()
         return 200
- 
+
+    def put( self, userId, caseId, deviceId ):
+        put = "[PUT MEDIA] "
+        print(put + "Getting data from JSON...")
+        data = request.get_json()
+        print( put + "Editing row of media table...")
+        media = db.session.query(DigitalMediaDesc).filter_by( id = request.args.get('dmId')).first() 
+        iterateJsonUpdate( media, data ) 
+        print( put + "Committing to DB...")
+        db.session.commit()
+        return 200
+
+    def delete( self, userId, caseId, deviceId  ):
+        db.session.query( DigitalMediaDesc ).filter_by( id = request.args.get("dmId")).delete()
+        db.session.commit()
+        return 200
+
 class Image(Resource):
     def get(self, userId, caseId, deviceId, dmId):
         # Get specific image for specified digital media/device/case for logged in user
@@ -199,7 +275,22 @@ class Image(Resource):
         db.session.add(imageInfo)
         db.session.commit()
         return 200
+    
+    def put( self, userId, caseId, deviceId, dmId ):
+        put = "[PUT IMAGE] "
+        print(put + "Getting data from JSON...")
+        data = request.get_json()
+        print( put + "Updating row of image table...")
+        image = db.session.query(ImageInfo).filter_by( id = request.args.get('imgId')).first() 
+        iterateJsonUpdate( image, data ) 
+        print( put + "Committing to DB...")
+        db.session.commit()
+        return 200
 
+    def delete( self, userId, caseId, deviceId, dmId  ):
+        db.session.query( ImageInfo ).filter_by( id = request.args.get("imgId")).delete()
+        db.session.commit()
+        return 200
 
 class File(Resource):   
     # Helper function for File POST
@@ -329,6 +420,6 @@ api.add_resource(FileMetaData, '/evd/<int:userId>/case/<int:caseId>/dev/<int:dev
 api.add_resource(Nuke, '/evd/nuke')
 
 if __name__ == "__main__":
-    #app.run(host = app.run(host = '129.65.247.21', port = 5000), debug=True)
-    app.run(host = app.run(host = '129.65.100.50', port = 5000, use_debugger=True, threaded=True), debug=True)
+    app.run(host = app.run(host = 'localhost', port = 5000), debug=True)
+    #app.run(host = app.run(host = '129.65.100.50', port = 5000, use_debugger=True, threaded=True), debug=True)
 #    app.run( host = app.run( host ='ec2-34-212-218-147.us-west-2.compute.amazonaws.com', port = 80, use_debugger=True, threaded=True), debug=True)
