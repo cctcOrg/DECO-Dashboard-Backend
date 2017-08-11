@@ -24,6 +24,8 @@ UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Upload
 #UPLOAD_FOLDER = './uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# updates object fields based on the JSON dictionary sent
+# used in PUT requests
 def iterateJsonUpdate( row, data, ignore=None ):
     if ignore:
         for key in ignore:
@@ -33,7 +35,6 @@ def iterateJsonUpdate( row, data, ignore=None ):
                 pass
     for key in data.keys():
         setattr(row, key, data[key])
-        #print( "key = " + row.__dict__[key] + " , " + "row.firstname = " + row.firstName)
     return row
 
 class UserInfo(Resource):
@@ -52,6 +53,7 @@ class UserInfo(Resource):
         print(post + "Creating row for DB insertion...")
         users = Users( 
             email = data['email'],
+            passwordHash = data['passwordHash'],
             lastName = data['lastName'],
             firstName = data['firstName'] )
 

@@ -44,6 +44,7 @@ class Users( Base ):
     __tablename__ = 'users'
     id = Column (Integer, primary_key = True)
     email = Column( String(), unique=True, nullable = False)
+    passwordHash = Column( String(), nullabel = False )
     lastName = Column( String(), nullable = False)
     firstName = Column( String(), nullable = False)    
 
@@ -61,6 +62,7 @@ class Users( Base ):
     def serialize( self ):
         return {
                   'id'          : self.id,
+                  'passwordHash': self.passwordHash,
                   'email'       : self.email,
                   'lastName'    : self.lastName,
                   'firstName'   : self.firstName
