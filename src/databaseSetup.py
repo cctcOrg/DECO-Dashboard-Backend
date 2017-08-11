@@ -44,7 +44,7 @@ class Users( Base ):
     __tablename__ = 'users'
     id = Column (Integer, primary_key = True)
     email = Column( String(), unique=True, nullable = False)
-    passwordHash = Column( String(), nullabel = False )
+    passwordHash = Column( String(), nullable = False )
     lastName = Column( String(), nullable = False)
     firstName = Column( String(), nullable = False)    
 
@@ -227,7 +227,7 @@ class RelevantFiles( Base):
               }
 
         
-#engine = create_engine('postgresql://cctc_user:cctc@localhost/dashboarddb')
-engine = create_engine( 'postgresql://postgres@localhost/newdb')
+engine = create_engine('postgresql://cctc_user:cctc@localhost/dashboarddb')
+#engine = create_engine( 'postgresql://postgres@localhost/newdb')
 #engine = create_engine('postgresql://cctc:CampSLOcctc@dashdb.cftpr0gv1icv.us-west-2.rds.amazonaws.com:5432/dashdb')
 Base.metadata.create_all(engine)

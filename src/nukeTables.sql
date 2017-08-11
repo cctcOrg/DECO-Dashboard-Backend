@@ -1,5 +1,5 @@
 -- SQL script that automates DESTROYING of tables.
-\connect newdb
+\connect dashboarddb
 
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public; 
