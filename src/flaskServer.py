@@ -40,8 +40,13 @@ def iterateJsonUpdate( row, data, ignore=None ):
 class UserInfo(Resource):
     def get(self):
         # Query User table by email 
-        user = db.session.query(Users).filter_by(email = request.args.get('email')).first()
-        return user.serialize
+        if request.args.get('email'):
+            user = db.session.query(Users).filter_by(email = request.args.get('email')).first()
+            return user.serialize
+        # Query User table for all users
+        else:
+            users = db.session.query(Users).all()
+            return { "user_summary_list": [user.serialize for user in users] }
 
     # Create a new user 
     def post(self):
