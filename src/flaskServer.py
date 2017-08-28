@@ -19,8 +19,8 @@ app.debug=True
 api = Api(app)
 db = SQLAlchemy(app)
 CORS(app)
-UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
-#UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
+#UPLOAD_FOLDER = '/Users/jacksonkurtz/Documents/Code/CCTC/DashboardBackend/Uploads'     
+UPLOAD_FOLDER = '/srv/http/DigitalEvidenceCollection/Backend/Uploads'
 #UPLOAD_FOLDER = './uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -39,6 +39,10 @@ def iterateJsonUpdate( row, data, ignore=None ):
 
 class UserInfo(Resource):
     def get(self):
+        # Query User table by id 
+        if request.args.get('id'):
+            user = db.session.query(Users).filter_by(id = request.args.get('id')).first()
+            return user.serialize
         # Query User table by email 
         if request.args.get('email'):
             user = db.session.query(Users).filter_by(email = request.args.get('email')).first()
@@ -357,6 +361,7 @@ class File(Resource):
             if tempFile.is_file():
                return abort(400), "File with this name already exists!"
 
+            print(post + "Saving file to new path...")
             # Save file to new path
             newFile.save(newPath)
 
