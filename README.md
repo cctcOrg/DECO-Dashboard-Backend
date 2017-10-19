@@ -7,7 +7,7 @@ This is California’s first collaborative forensic data display that will allow
 investigators to track cases digitally.
 
 Contributors  | Time Period
-           ---|---
+          --- | ---
 Duc Dao       | Summer, Fall 2017
 Jackson Kurtz | Summer 2017
 Tyler Nash    | Summer 2017
