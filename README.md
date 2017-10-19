@@ -6,6 +6,8 @@ the development environment to developing the backend server for dashboard.
 This is California’s first collaborative forensic data display that will allow 
 investigators to track cases digitally.
 
+REST specifications can be found [here](https://docs.google.com/document/d/1Vgh1G7XK7ApWwdYHQmE8Gt5bb2WLG0WOvfbQTDjDDmg/edit#).
+
 | Contributors  | Time Period        |
 |           --- | ---                |
 | Duc Dao       | Summer, Fall 2017  |
