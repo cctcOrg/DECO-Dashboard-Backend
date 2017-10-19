@@ -1,6 +1,11 @@
-# CCTC Evidence Dashboard Backend
+# CCTC Digital Evidence Collection Dashboard Backend
 
-GitHub page for CCTC Evidence Dashboard Backend Team (Duc, Jackson, and Tyler).
+GitHub page for CCTC Digital Evidence Collection Dashboard.
+
+Contributors:
+* Duc Dao (Summer, Fall 2017)
+* Jackson Kurtz (Summer 2017)
+* Tyler Nash (Summer 2017)
 
 # PostgreSQL "Cheat Sheet"
 
