@@ -117,6 +117,7 @@ One of our eventual goals was to also use Amazon’s Cognito service to set up a
            `/etc/postgres/9.3/main/postgresql.conf`. Need to open as sudo.
         2. Enable or add `listen_addresses = '*'`
         3. Restart database engine: `sudo service postgresql restart`
+   * Checking to see if PostgreSQL database is running: `/sbin/service postgresql status`
 
 # 5.0 CURL Request to Flask Server
 Post request that creates 'User' entry:
