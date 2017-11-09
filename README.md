@@ -16,18 +16,19 @@ REST specifications can be found [here](https://docs.google.com/document/d/1Vgh1
 
 # 1.0 Running the Backend
 
-There are two ways to run the backend. We used section 1.1 for development on our local and local Fedora server (codenamed PizzaGoldFish) and section 1.2 for deployment on Amazon Web Services (AWS).
+There are two ways to run the backend. We used section 1.1 for development on our local Fedora Server (codenamed PizzaGoldFish, a Dell Latitude E6430) and section 1.2 for deployment on Amazon Web Services (AWS).
 
 ## 1.1 Running server WITHOUT Docker and Nginx (Files are in src directory)
-1. Install PostgreSQL and Python files in `requirements.txt`
-2. Create Postgres database (must use root user or configure user to have superuser privileges)
+1. Navigate to the project directory, `/srv/http/DigitalEvidenceCollection/Backend/src`.
+2. Install PostgreSQL and Python files in `requirements.txt`
+3. Create Postgres database (must use root user or configure user to have superuser privileges)
     1. Start Postgres application
     2. Type `psql` in terminal to enter psql shell
     3. To create database, type `CREATE database {db name};`
     4. Exit with `\q`
-3. Edit `databaseSetup.py` and `flaskServer.py` as described in Setup section below
-4. Create tables with `python databaseSetup.py`
-5. Run server with `python flaskServer.py`
+4. Edit `databaseSetup.py` and `flaskServer.py` as described in Setup section below
+5. Create tables with `python databaseSetup.py`
+6. Run server with `python flaskServer.py`
 
 ## 1.2 Running server WITH Docker and Nginx (Files in DockerTest directory)
 1. Install PostgreSQL
